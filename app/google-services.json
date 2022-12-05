@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "297468636924",
+    "project_id": "audiostreamapp-6a52b",
+    "storage_bucket": "audiostreamapp-6a52b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297468636924:android:5ea1d541524f30422fb179",
+        "android_client_info": {
+          "package_name": "com.example.audiostreamapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297468636924-ubi365ueleaqj8pejr1pmrvvr12h1l4g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.audiostreamapp",
+            "certificate_hash": "d1c23095a18e2656e3a12aeffbec3530b1b11bb2"
+          }
+        },
+        {
+          "client_id": "297468636924-vfgj1je1s6ivtfpq9bhj720mho6sj014.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgcEFwsKd_UdzRBJI9UglHswUvBj1hLCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297468636924-vfgj1je1s6ivtfpq9bhj720mho6sj014.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
