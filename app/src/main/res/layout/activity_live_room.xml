@@ -51,6 +51,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/play_buttons_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -83,5 +84,47 @@
             android:layout_height="60dp"
             android:src="@drawable/ic_fast_forward" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+
+        android:paddingTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@id/play_buttons_layout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/live_comment_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <EditText
+            android:id="@+id/input_livechat_box"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/send_livechat_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:scrollbarSize="4dp"
+            android:text="Send"
+            app:iconPadding="0dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

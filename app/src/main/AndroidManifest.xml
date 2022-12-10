@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +16,9 @@
         tools:targetApi="31">
         <activity
             android:name=".LiveRoomActivity"
-            android:exported="false">
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:label="@string/title_activity_live_audio_room">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

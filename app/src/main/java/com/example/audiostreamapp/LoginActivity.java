@@ -29,6 +29,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -39,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private static final String TAG = "SignedInActivity";
     private Activity currentActivity;
+    private DatabaseReference mDatabase;
+// ...
 
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
@@ -78,7 +82,11 @@ public class LoginActivity extends AppCompatActivity {
         IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//            mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+//            String uid=user.getUid();
+//            Log.e("uid",uid);
+//            mDatabase.child("users/"+uid+"/username").setValue(user.getDisplayName());
             showSnackbar(R.string.welcome);
             requestPermissionsIfNecessary(this,new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -178,3 +186,4 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 }
+

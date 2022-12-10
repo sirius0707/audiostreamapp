@@ -22,4 +22,8 @@
     <style name="Theme.AudioStreamApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.AudioStreamApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Button.White" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">@android:color/white</item>
+    </style>
 </resources>

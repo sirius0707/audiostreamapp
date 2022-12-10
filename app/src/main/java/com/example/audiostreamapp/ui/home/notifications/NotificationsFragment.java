@@ -1,4 +1,4 @@
-package com.example.audiostreamapp.ui.notifications;
+package com.example.audiostreamapp.ui.home.notifications;
 
 import android.app.Activity;
 import android.content.Intent;

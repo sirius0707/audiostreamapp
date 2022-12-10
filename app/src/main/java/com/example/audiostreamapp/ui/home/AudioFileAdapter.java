@@ -2,7 +2,6 @@ package com.example.audiostreamapp.ui.home;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -23,7 +22,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +33,7 @@ public class AudioFileAdapter extends
     private Activity mContext;
 
     // Pass in the contact array into the constructor
-    public AudioFileAdapter(List<AudioFile> contacts,Activity context) {
+    public AudioFileAdapter(List<AudioFile> contacts, Activity context) {
         mContacts = contacts;
         this.mContext = context;
 

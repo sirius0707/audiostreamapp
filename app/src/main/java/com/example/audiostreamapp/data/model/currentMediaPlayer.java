@@ -39,4 +39,7 @@ public class currentMediaPlayer {
     }
 
 
+    public static String getMediaName() {
+        return mediaName;
+    }
 }
