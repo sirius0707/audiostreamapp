@@ -81,6 +81,7 @@ public class LiveRoomActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid=user.getUid();
+        String userName = user.getDisplayName();
 
         mDatabase.child("music/"+ currentMediaPlayer.
                 getMediaName().
@@ -228,7 +229,8 @@ public class LiveRoomActivity extends AppCompatActivity {
                 liveCommitAttribute.put("TimeStamp",timeStamp);
                 liveCommitAttribute.put("Context",singleComment);
                 liveCommitAttribute.put("userID",uid);
-                if(singleComment!=null){
+                liveCommitAttribute.put("userName",userName);
+                if(singleComment!=null && singleComment.length() != 0){
                     mDatabase.child("music/"+ currentMediaPlayer.
                             getMediaName().
                             replace(".mp3","")+"/livechat/"+key).setValue(liveCommitAttribute) .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -268,7 +270,7 @@ public class LiveRoomActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // A new comment has been added, add it to the displayed list
                 Map<String,Object> comment = (Map<String,Object>) snapshot.getValue();
-                items.add(new LiveComment(comment.get("userID").toString(),Long.parseLong(comment.get("TimeStamp").toString()),comment.get("Context").toString()));
+                items.add(new LiveComment(comment.get("userID").toString(),Long.parseLong(comment.get("TimeStamp").toString()),comment.get("Context").toString(),comment.get("userName").toString()));
                 adapter.notifyItemRangeInserted(items.size()-1,1);
                 if (onButtom)
                     commentList.scrollToPosition(items.size() - 1);
