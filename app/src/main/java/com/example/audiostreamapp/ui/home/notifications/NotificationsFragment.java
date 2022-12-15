@@ -1,6 +1,11 @@
 package com.example.audiostreamapp.ui.home.notifications;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,23 +16,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.audiostreamapp.LoginActivity;
-import com.example.audiostreamapp.MainActivity;
+import com.example.audiostreamapp.ModifyProfileActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.databinding.FragmentNotificationsBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -36,10 +44,11 @@ import java.net.URL;
 public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
-//    private FirebaseAuth mAuth;
-
 
     private static final int PICK_PDF_FILE = 2;
+    private static final String TAG = "NotificationsFragment";
+    private Activity currentActivity;
+
 
     private void openFile(URL pickerInitialUri) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -83,6 +92,7 @@ public class NotificationsFragment extends Fragment {
             }
         }
     }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -95,9 +105,36 @@ public class NotificationsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Button fileButton = (Button) view.findViewById(R.id.FileToUploadButton);
-        Button signOutButton = (Button) view.findViewById(R.id.sign_out_Button);
-//        mAuth = FirebaseAuth.getInstance();
+        ImageView Image_Avatar = (ImageView) view.findViewById(R.id.Image_Avatar);
+        Button modifyprofileButton = (Button) view.findViewById(R.id.Button_To_Modify_Profile);
+        Button fileButton = (Button) view.findViewById(R.id.Button_Upload_File);
+        Button resetpwdButton = (Button) view.findViewById(R.id.Button_To_Reset_PWD);
+        Button signOutButton = (Button) view.findViewById(R.id.Button_Sign_Out);
+
+        currentActivity = getActivity();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        // Show Avatar
+        if (user != null) {
+            // Get a reference to the FirebaseStorage object
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            // Create a StorageReference to the project URL and the file to download
+            StorageReference storageRef;
+            if(user.getPhotoUrl() != null)
+                storageRef = storage.getReferenceFromUrl("gs://audiostreamapp-6a52b.appspot.com/userAvatar").child(user.getUid()+".jpg");
+            else
+                storageRef = storage.getReferenceFromUrl("gs://audiostreamapp-6a52b.appspot.com/userAvatar").child("Default.jpeg");
+            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Log.e("Tuts+", "uri: " + uri.toString());
+                    //Handle whatever you're going to do with the URL here
+                    Picasso.get().load(uri.toString()).resize(400, 400).into(Image_Avatar);
+                }
+            });
+        }
+
+        // Button: Upload Video
         fileButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -110,10 +147,51 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
+        // Button: To Modify Profile
+        modifyprofileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent modifyprofile_intent = new Intent(currentActivity, ModifyProfileActivity.class);
+                startActivity(modifyprofile_intent);
+            }
+        });
+
+        // Button: Reset Password
+        resetpwdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialog d = new AlertDialog.Builder(currentActivity)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle("Reset Password")
+                        .setMessage("Are you sure you want to reset password? You need to login again.")
+                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                sendPasswordReset(user.getEmail());
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        });
+
+        // Button: Sign Out
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().finish();
+                Dialog d = new AlertDialog.Builder(currentActivity)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle("Sign Out")
+                        .setMessage("Are you sure you want to log out?")
+                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                getActivity().finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
         });
 
@@ -124,4 +202,28 @@ public class NotificationsFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    // Show message
+    private void showSnackbar(String errorMessageRes) {
+        Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
+    }
+
+    // send email to reset pwd
+    public void sendPasswordReset(String e_mail) {
+        // [START send_password_reset]
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+
+        auth.sendPasswordResetEmail(e_mail)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            showSnackbar("An Email for reseting password has been sent. Please log in.");
+                            getActivity().finish();
+                        }
+                    }
+                });
+        // [END send_password_reset]
+    }
+
 }
