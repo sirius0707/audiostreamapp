@@ -28,6 +28,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,6 +44,7 @@ public class ModifyProfileActivity extends AppCompatActivity {
     TextInputLayout nameTextInput, emailTextInput;
     TextInputEditText nameEditText, emailEditText;
     Button modifyprofileButton, back2notificationButton;
+    private DatabaseReference mDatabase;
 
     private static final int PICK_PDF_FILE = 2;
 
@@ -61,8 +64,10 @@ public class ModifyProfileActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_PDF_FILE);
     }
 
-    public void onActivityResult(int requestCode, int resultCode,
+
+    protected void onActivityResult(int requestCode, int resultCode,
                                  Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
         if (requestCode == PICK_PDF_FILE
                 && resultCode == Activity.RESULT_OK) {
             // The result data contains a URI for the document or directory that
@@ -101,6 +106,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_profile);
+
+
     }
 
     @Override
@@ -256,9 +263,15 @@ public class ModifyProfileActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "User profile updated.");
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+                            String uid=user.getUid();
+                            Log.e("uid",uid);
+                            mDatabase.child("users/"+uid+"/username").setValue(user.getDisplayName());
                         }
                     }
                 });
+
         // [END update_profile]
     }
 

@@ -19,6 +19,13 @@
         android:theme="@style/Theme.AudioStreamApp"
         tools:targetApi="31">
         <activity
+            android:name=".DisplayProfileActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ModifyProfileActivity"
             android:exported="false">
             <meta-data
