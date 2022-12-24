@@ -3,10 +3,14 @@ package com.example.audiostreamapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +30,8 @@ public class DisplayProfileActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private TextView nameText;
     private DatabaseReference mDatabase;
+    private Button directmessageButton;
+    private Activity currentActivity=this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +42,9 @@ public class DisplayProfileActivity extends AppCompatActivity {
         avatarImage = findViewById(R.id.Image_Avatar);
         nameText = findViewById(R.id.chatter_name);
         String userID = getIntent().getStringExtra("USERID");
+        directmessageButton = findViewById(R.id.Button_To_Direct_Message);
 
-        //display name from realtime database
+        //get username from realtime database
         mDatabase.child("users").child(userID).child("username").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -76,5 +83,15 @@ public class DisplayProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Button: To Direct Message
+        directmessageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent directmessage_intent = new Intent(currentActivity, DirectMessageActivity.class);
+                directmessage_intent.putExtra("receiverID", userID);
+                currentActivity.startActivity(directmessage_intent);
+            }
+        });
     }
+
 }

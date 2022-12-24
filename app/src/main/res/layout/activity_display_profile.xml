@@ -25,10 +25,10 @@
         android:text="test"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/Direct_Message_Button" />
+        app:layout_constraintBottom_toTopOf="@id/Button_To_Direct_Message" />
 
     <Button
-        android:id="@+id/Direct_Message_Button"
+        android:id="@+id/Button_To_Direct_Message"
         android:layout_width="150sp"
         android:layout_height="50sp"
         android:layout_marginStart="161dp"
