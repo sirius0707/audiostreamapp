@@ -1,5 +1,7 @@
 package com.example.audiostreamapp;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,6 +67,8 @@ public class LiveRoomActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     boolean onButtom=true;
 
+    private static final String TAG = "LiveRoomActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,17 +84,15 @@ public class LiveRoomActivity extends AppCompatActivity {
         liveComment = findViewById(R.id.input_livechat_box);
         mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid=user.getUid();
+        String uid = user.getUid();
         String userName = user.getDisplayName();
 
-        mDatabase.child("music/"+ currentMediaPlayer.
-                getMediaName().
-                replace(".mp3","")+"/livechatNum").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","")+"/livechatNum").addValueEventListener(new ValueEventListener() {
+            // livechatNum数据改变时触发，展示播放人数
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                setTitle( currentMediaPlayer.
-                        getMediaName().
-                        replace(".mp3","")+"("+snapshot.getValue().toString()+" Person on Live)");
+                // snapshot: DataSnapshot{key = livechatNum, value = ?}
+                setTitle(currentMediaPlayer.getMediaName().replace(".mp3","")+"("+snapshot.getValue().toString()+" Person on Live)");
             }
 
             @Override
@@ -100,7 +102,7 @@ public class LiveRoomActivity extends AppCompatActivity {
         });
 
 
-
+        // Player function
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -129,6 +131,8 @@ public class LiveRoomActivity extends AppCompatActivity {
         //Set duration on text view
         playerDuration.setText(sDuration);
         playerPosition.setText(convertFormat(mediaPlayer.getCurrentPosition()));
+
+        // Button: Play
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +146,7 @@ public class LiveRoomActivity extends AppCompatActivity {
             }
         });
 
-
+        // Button: Pause
         btPause.setOnClickListener(new View.OnClickListener() {
                                        @Override
                                        public void onClick(View view) {
@@ -209,14 +213,13 @@ public class LiveRoomActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         RecyclerView commentList = (RecyclerView) this.findViewById(R.id.live_comment_list);
         ArrayList<LiveComment> items = new ArrayList<>();
         LiveCommentAdapter adapter = new LiveCommentAdapter(items,this);
         commentList.setAdapter(adapter);
         commentList.setLayoutManager(new LinearLayoutManager(this));
+
+        // 点击发送评论按钮
         btSendMs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,29 +234,24 @@ public class LiveRoomActivity extends AppCompatActivity {
                 liveCommitAttribute.put("userID",uid);
                 liveCommitAttribute.put("userName",userName);
                 if(singleComment!=null && singleComment.length() != 0){
-                    mDatabase.child("music/"+ currentMediaPlayer.
-                            getMediaName().
-                            replace(".mp3","")+"/livechat/"+key).setValue(liveCommitAttribute) .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    mDatabase.child("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","") + "/livechat/"+key)
+                            .setValue(liveCommitAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     liveComment.setText("");
                                 };
                             });
-
                 }
             }
         });
 
         //display live comments
-
         commentList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 if (!recyclerView.canScrollVertically(1)) {
                     onButtom=true;
-
                 }
                 else{
                     onButtom=false;
@@ -261,16 +259,18 @@ public class LiveRoomActivity extends AppCompatActivity {
             }
         });
 
-        boolean flag=true;
         //init audiofile list from Firebase Storage
-        mDatabase.child("music/"+ currentMediaPlayer.
-                        getMediaName().
-                        replace(".mp3","")+"/livechat").limitToLast(6).addChildEventListener(new ChildEventListener() {
+        // 数据库music/歌曲.mp3/livechat中最新（最后）6个评论
+        mDatabase.child("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","")+"/livechat")
+                .limitToLast(6).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // A new comment has been added, add it to the displayed list
                 Map<String,Object> comment = (Map<String,Object>) snapshot.getValue();
-                items.add(new LiveComment(comment.get("userID").toString(),Long.parseLong(comment.get("TimeStamp").toString()),comment.get("Context").toString(),comment.get("userName").toString()));
+                items.add(new LiveComment(comment.get("userID").toString(),
+                        Long.parseLong(comment.get("TimeStamp").toString()),
+                        comment.get("Context").toString(),
+                        comment.get("userName").toString()));
                 adapter.notifyItemRangeInserted(items.size()-1,1);
                 if (onButtom)
                     commentList.scrollToPosition(items.size() - 1);
@@ -298,29 +298,37 @@ public class LiveRoomActivity extends AppCompatActivity {
         });
     }
 
+    // 转换格式
     private String convertFormat(int duration) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(duration),
                 TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
     }
 
+    // 打开音乐界面人数+1
     @Override
     protected void onStart() {
         super.onStart();
         Map<String, Object> updates = new HashMap<>();
-        updates.put("music/"+ currentMediaPlayer.
-                getMediaName().
-                replace(".mp3","")+"/livechatNum", ServerValue.increment(1));
+        // livechatNum+1
+        updates.put("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","")+"/livechatNum",
+                ServerValue.increment(1));
         mDatabase.updateChildren(updates);
     }
 
+    // 打开音乐界面人数-1
     @Override
     protected void onStop() {
         super.onStop();
         Map<String, Object> updates = new HashMap<>();
-        updates.put("music/"+ currentMediaPlayer.
-                getMediaName().
-                replace(".mp3","")+"/livechatNum", ServerValue.increment(-1));
+        // livechatNum-1
+        updates.put("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","")+"/livechatNum",
+                ServerValue.increment(-1));
         mDatabase.updateChildren(updates);
+    }
+
+    // Show message
+    private void showSnackbar(String errorMessageRes) {
+        Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
 }

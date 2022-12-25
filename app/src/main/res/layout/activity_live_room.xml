@@ -87,13 +87,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
+        android:id="@+id/linearLayout3"
+        android:layout_width="379dp"
+        android:layout_height="280dp"
 
+        android:orientation="vertical"
         android:paddingTop="10dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@id/play_buttons_layout">
+        app:layout_constraintTop_toBottomOf="@id/play_buttons_layout"
+        tools:layout_editor_absoluteX="32dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/live_comment_list"
@@ -127,4 +129,5 @@
             android:text="Send"
             app:iconPadding="0dp" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

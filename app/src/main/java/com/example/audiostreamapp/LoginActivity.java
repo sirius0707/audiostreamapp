@@ -82,11 +82,11 @@ public class LoginActivity extends AppCompatActivity {
         IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
-//            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//            mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
-//            String uid=user.getUid();
-//            Log.e("uid",uid);
-//            mDatabase.child("users/"+uid+"/username").setValue(user.getDisplayName());
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+            String uid=user.getUid();
+            Log.e("uid",uid);
+            mDatabase.child("users/"+uid+"/username").setValue(user.getDisplayName());
             showSnackbar(R.string.welcome);
             requestPermissionsIfNecessary(this,new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -174,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
         else{
+
             Intent intent = new Intent(currentActivity, MainActivity.class);
             startActivityForResult(intent, RC_FINISH_Main);
         }

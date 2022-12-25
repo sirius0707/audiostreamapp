@@ -2,6 +2,7 @@ package com.example.audiostreamapp.liveComment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -10,10 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.audiostreamapp.DisplayProfileActivity;
+import com.example.audiostreamapp.LiveRoomActivity;
 import com.example.audiostreamapp.MainActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
@@ -62,6 +66,15 @@ public class LiveCommentAdapter extends
         // Set item views based on your views and data model
         TextView textView = holder.nameTextView;
         textView.setText(liveComment.getUserName()+"("+liveComment.getCommentTime()+")"+" : "+liveComment.getCommentText());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String uid = liveComment.userID;
+                Intent showProfile = new Intent(mContext, DisplayProfileActivity.class);
+                showProfile.putExtra("USERID",uid);
+                mContext.startActivity(showProfile);
+            }
+        });
     }
 
     @Override
@@ -84,6 +97,7 @@ public class LiveCommentAdapter extends
             super(itemView);
 
             nameTextView = (TextView) itemView.findViewById(R.id.single_comment_format);
+
 
         }
     }

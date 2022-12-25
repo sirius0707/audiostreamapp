@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ModifyProfileActivity">
+
+    <ImageView
+        android:id="@+id/ImageView_Avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="30dp"
+        android:adjustViewBounds="true"
+        android:maxWidth="180dp"
+        android:maxHeight="180dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TextView_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="200dp"
+        android:text="Name"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TextInput_Name"
+        android:layout_width="294dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_Name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/EditText_Name"
+            android:layout_width="294sp"
+            android:layout_height="48sp"
+            android:hint="New Name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/TextView_Email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="30dp"
+        android:text="E_mail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextInput_Name" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TextInput_Email"
+        android:layout_width="294sp"
+        android:layout_height="48sp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_Email">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/EditText_Email"
+            android:layout_width="294sp"
+            android:layout_height="48sp"
+            android:hint="New E-mail" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/Button_Modify_Profile"
+        android:layout_width="150sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="569dp"
+        android:layout_marginBottom="114dp"
+        android:text="MODIFY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/Button_Back_To_Notification"
+        android:layout_width="150sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="569dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="114dp"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

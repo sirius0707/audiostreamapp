@@ -9,13 +9,12 @@ public class LiveComment {
     String commentText;
     String userName;
 
-    public LiveComment(String userID,long miliTime,String commentText,String userName){
+    public LiveComment(String userID, long miliTime, String commentText, String userName){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         commentTime=dateFormat.format(new Date(miliTime*1000));
         this.userID = userID;
         this.commentText = commentText;
         this.userName = userName;
-
     }
 
 
@@ -31,9 +30,6 @@ public class LiveComment {
         return commentText;
     }
 
-    public String getCommentTime() {
-
-        return commentTime;
-    }
+    public String getCommentTime() {return commentTime;}
 
 }
