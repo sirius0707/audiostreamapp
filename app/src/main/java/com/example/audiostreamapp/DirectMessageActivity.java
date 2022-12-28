@@ -45,7 +45,7 @@ public class DirectMessageActivity extends AppCompatActivity {
 
     private static final String TAG = "DirectMessageActivity";
 
-    //private ArrayList<Message> messageList = new ArrayList<Message>();//未用上
+    //private ArrayList<Message> messageList = new ArrayList<Message>();//unused
 
     private RecyclerView msgRecyclerView;
     private DatabaseReference mDatabase;
@@ -80,7 +80,7 @@ public class DirectMessageActivity extends AppCompatActivity {
         msgRecyclerView.setAdapter(adapter);
 
 
-        mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();//或许有问题
+        mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 /*       我们还需要为button建立一个监听器，我们需要将编辑框的内容发送到 RecyclerView 上：
@@ -116,7 +116,7 @@ public class DirectMessageActivity extends AppCompatActivity {
             }
         });
 
-        //display
+        // Display
         msgRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -130,11 +130,11 @@ public class DirectMessageActivity extends AppCompatActivity {
             }
         });
 
-        // 数据库message/userID-key/
+        // Realtime Database/message/userID-key/
         mDatabase.child("message/" + user.getUid() + "/" + receiverID).limitToLast(20).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // A new comment has been added, add it to the displayed list
+                // A new Message has been added, add it to the displayed list
                 Map<String,Object> message = (Map<String,Object>) snapshot.getValue();
                 items.add(new Message(message.get("Context").toString(),
                         Long.parseLong(message.get("TimeStamp").toString()),
@@ -166,12 +166,6 @@ public class DirectMessageActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private List<Message> getData(){
-        List<Message> list = new ArrayList<>();
-        //list.add(new Message("Hello",Message.TYPE_RECEIVED));
-        return list;
     }
 
     // Show message

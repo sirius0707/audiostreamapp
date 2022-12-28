@@ -14,9 +14,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.audiostreamapp.data.model.Message;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,7 +28,14 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.audiostreamapp.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler();
     Runnable runnable;
 
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();;
+
     private Activity currentActivity;
     private ActivityMainBinding binding;
     @Override
@@ -45,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         currentActivity=this;
+
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -105,17 +120,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         btPause.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View view) {
-                                           btPause.setVisibility(View.GONE);
-                                           btPlay.setVisibility(View.VISIBLE);
-                                           mediaPlayer.pause();
-                                           handler.removeCallbacks(runnable);
-                                       }
-                                   }
-        );
+            @Override
+            public void onClick(View view) {
+                btPause.setVisibility(View.GONE);
+                btPlay.setVisibility(View.VISIBLE);
+                mediaPlayer.pause();
+                handler.removeCallbacks(runnable);
+            }
+        });
 
         btFf.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,13 +185,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         LinearLayout audioPlayerLayout = (LinearLayout )findViewById(R.id.audioPlayerLayout);
 
         audioPlayerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startLiveRoomActivity();
+            }
+        });
+
+        // Get the latest status of Realtime Database
+        mDatabase.child("message/" + user.getUid()).limitToLast(20).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Map<String,Object> message = (Map<String,Object>) snapshot.getValue();
+                int latest_number = message.size();
+                int i = 0;
+                for(DataSnapshot ds : snapshot.getChildren()){
+                    i++;
+                    if(i==latest_number){
+                        if(user.getUid().equals(ds.child("Receiver").getValue().toString()))
+                            showSnackbar("You have a new message!");
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
@@ -205,6 +253,11 @@ public class MainActivity extends AppCompatActivity {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(duration),
                 TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
+    }
+
+    // Show message
+    private void showSnackbar(String errorMessageRes) {
+        Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -26,7 +26,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.list = list;
     }
 
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,24 +37,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Message message = list.get(position);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user.getUid() == message.getSender()) {
-            Log.d(TAG, "Send a message"+message.getMessageTime());
-            //如果是发出的消息，则显示右边的消息布局，将左边的消息布局隐藏
+        if(user.getUid().equals(message.getSender())) {
+            // Display the message layout on the right and hide the message layout on the left
             holder.rightLayout.setVisibility(View.VISIBLE);
             holder.right_message.setText(message.getMessageTime() + "\n" + message.getContent());
-
-            //注意此处隐藏左边的消息布局用的是 View.GONE
             holder.leftLayout.setVisibility(View.GONE);
         }
-        else{
-            Log.d(TAG, "Receive a message"+message.getMessageTime());
-            //如果是收到的消息，则显示左边的消息布局，将右边的消息布局隐藏
+        else if(user.getUid().equals(message.getReceiver())){
+            // Display the message layout on the left and hide the message layout on the right
             holder.leftLayout.setVisibility(View.VISIBLE);
             holder.left_message.setText(message.getMessageTime() + "\n" + message.getContent());
-
-            //注意此处隐藏右面的消息布局用的是 View.GONE
             holder.rightLayout.setVisibility(View.GONE);
         }
+        else
+            Log.d(TAG, "Error");
     }
 
     @Override
