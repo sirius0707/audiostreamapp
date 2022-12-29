@@ -136,6 +136,7 @@ public class DirectMessageActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // A new Message has been added, add it to the displayed list
                 Map<String,Object> message = (Map<String,Object>) snapshot.getValue();
+                //snapshot.getKey()->String
                 items.add(new Message(message.get("Context").toString(),
                         Long.parseLong(message.get("TimeStamp").toString()),
                         message.get("Sender").toString(),
