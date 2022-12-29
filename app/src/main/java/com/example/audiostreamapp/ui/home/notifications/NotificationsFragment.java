@@ -49,7 +49,6 @@ public class NotificationsFragment extends Fragment {
     private static final String TAG = "NotificationsFragment";
     private Activity currentActivity;
 
-
     private void openFile(URL pickerInitialUri) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -98,8 +97,6 @@ public class NotificationsFragment extends Fragment {
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-
         return root;
     }
 
