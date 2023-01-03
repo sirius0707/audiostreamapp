@@ -19,10 +19,15 @@ import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class AudioFileAdapter extends
@@ -31,6 +36,7 @@ public class AudioFileAdapter extends
     // Store a member variable for the contacts
     private List<AudioFile> mContacts;
     private Activity mContext;
+    private DatabaseReference mDatabase;
 
     // Pass in the contact array into the constructor
     public AudioFileAdapter(List<AudioFile> contacts, Activity context) {
@@ -41,6 +47,7 @@ public class AudioFileAdapter extends
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -89,6 +96,13 @@ public class AudioFileAdapter extends
 
             messageButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    // Count play times of a song
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("music/"+ currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3","")+"/playedTimes", ServerValue.increment(1));
+                    mDatabase.updateChildren(updates);
+
                     // TODO Auto-generated method stub
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/"+nameTextView.getText());
                     storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

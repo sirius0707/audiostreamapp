@@ -7,15 +7,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.audiostreamapp.data.model.currentMediaPlayer;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -23,9 +18,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.databinding.ActivityMainBinding;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler();
     Runnable runnable;
 
+    private DatabaseReference mDatabase;
+
     private Activity currentActivity;
     private ActivityMainBinding binding;
     @Override
@@ -49,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
+
+        mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -95,6 +101,13 @@ public class MainActivity extends AppCompatActivity {
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Count play times of a song
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("music/"+ currentMediaPlayer.
+                        getMediaName().
+                        replace(".mp3","")+"/playedTimes", ServerValue.increment(1));
+                mDatabase.updateChildren(updates);
+
                 //Hide play button and show pause button
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
