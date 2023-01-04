@@ -2,6 +2,7 @@ package com.example.audiostreamapp.data.model;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +39,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         this.list = list;
         this.mContext = context;
     }
-    StorageReference storageRef;
+    StorageReference storageRef, storageRef_message;
 
     @NonNull
     @Override
@@ -50,8 +51,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = list.get(position);
-        // Set item views based on your views and data model
-        holder.username.setText(user.getUsername());
 
         //display avatar
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -79,6 +78,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             }
         });
 
+        // Set item views based on your views and data model
+        holder.username.setText(user.getUsername());
+        holder.latestmessage.setText("latest");
+        holder.latestmessage.setTextColor(Color.RED);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,7 +103,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public ImageView useravatar;
-        public TextView username;
+        public TextView username, latestmessage;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -111,6 +114,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
             useravatar = (ImageView) View.findViewById(R.id.single_userAvatar_format);
             username = (TextView) View.findViewById(R.id.single_username_format);
+            latestmessage = (TextView) View.findViewById(R.id.single_latest_message_format);
 
         }
 

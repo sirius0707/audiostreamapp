@@ -65,6 +65,8 @@ public class DashboardFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private DatabaseReference mDatabase;
 
+    FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
+
     ArrayList<User> items = new ArrayList<>();
 
     boolean onButtom=true;

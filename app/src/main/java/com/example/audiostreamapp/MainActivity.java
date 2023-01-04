@@ -1,8 +1,13 @@
 package com.example.audiostreamapp;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -16,11 +21,15 @@ import android.widget.Toast;
 
 import com.example.audiostreamapp.data.model.Message;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
+import com.example.audiostreamapp.ui.dashboard.DashboardFragment;
+import com.example.audiostreamapp.ui.home.notifications.NotificationsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -40,6 +49,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
     TextView playerPosition,playerDuration;
     SeekBar seekBar;
     ImageView btRew,btPlay,btPause,btFf;
@@ -53,12 +64,15 @@ public class MainActivity extends AppCompatActivity {
 
     private Activity currentActivity;
     private ActivityMainBinding binding;
+
+    private String CHANNEL_ID = "ChannelID";
+    int notificationId = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        currentActivity=this;
-
+        currentActivity = this;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -73,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
 
     }
 
@@ -208,8 +221,28 @@ public class MainActivity extends AppCompatActivity {
                 for(DataSnapshot ds : snapshot.getChildren()){
                     i++;
                     if(i==latest_number){
-                        if(user.getUid().equals(ds.child("Receiver").getValue().toString()))
+                        if(user.getUid().equals(ds.child("Receiver").getValue().toString())) {
                             showSnackbar("You have a new message!");
+                            createNotificationChannel();
+                            Intent intent = new Intent(currentActivity, DisplayProfileActivity.class);
+                            intent.putExtra("USERID", ds.child("Sender").getValue().toString());
+                            PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(currentActivity, CHANNEL_ID)
+                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                    .setContentTitle("New Message Received")
+                                    .setContentText(ds.child("Context").getValue().toString())
+                                    .setColor(Color.RED)
+                                    .setNumber(12)
+                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                    .setContentIntent(pendingIntent)
+                                    .setAutoCancel(true);
+                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(currentActivity);
+
+                            // notificationId is a unique int for each notification that you must define
+                            notificationManager.notify(notificationId, builder.build());
+
+                        }
                     }
                 }
             }
@@ -258,6 +291,22 @@ public class MainActivity extends AppCompatActivity {
     // Show message
     private void showSnackbar(String errorMessageRes) {
         Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 }
