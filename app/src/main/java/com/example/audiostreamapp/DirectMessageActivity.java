@@ -69,10 +69,6 @@ public class DirectMessageActivity extends AppCompatActivity {
         inputText = findViewById(R.id.input_text);
         send = findViewById(R.id.send);
 
-
-        //ArrayList<Message> items = new ArrayList<>();//用的items
-
-
         msgRecyclerView = findViewById(R.id.msg_recycler_view);
         layoutManager = new LinearLayoutManager(this);
         msgRecyclerView.setLayoutManager(layoutManager);
@@ -135,7 +131,7 @@ public class DirectMessageActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // A new Message has been added, add it to the displayed list
-                Map<String,Object> message = (Map<String,Object>) snapshot.getValue();
+                Map<    String,Object> message = (Map<String,Object>) snapshot.getValue();
                 //snapshot.getKey()->String
                 items.add(new Message(message.get("Context").toString(),
                         Long.parseLong(message.get("TimeStamp").toString()),
