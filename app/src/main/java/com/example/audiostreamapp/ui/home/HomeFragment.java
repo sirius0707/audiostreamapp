@@ -18,12 +18,17 @@ import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.databinding.FragmentHomeBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,8 +38,9 @@ public class HomeFragment extends Fragment {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     ArrayList<AudioFile> audioFiles;
     ArrayList<AudioFile> filteredAudioFiles;
+    ArrayList<String> recommendedMusic;
     String searchPara;
-
+    private DatabaseReference mDatabase;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -50,9 +56,60 @@ public class HomeFragment extends Fragment {
         super.onStart();
         EditText textSearch = getView().findViewById(R.id.textSearch);
         RecyclerView albumList = (RecyclerView) this.getView().findViewById(R.id.album_list);
+        RecyclerView albumRecList = (RecyclerView) this.getView().findViewById(R.id.album_recommend_list);
+        mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
         Activity currentActivity=this.getActivity();
+
         //init audiofile list from Firebase Storage
         StorageReference storageRef = storage.getReference();
+        Query myTopPostsQuery = mDatabase.child("music/").orderByChild("playedTimes").limitToLast(5);
+        recommendedMusic = new ArrayList<>();
+
+        myTopPostsQuery.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    System.out.println("postSnapshot.getKey() = " + postSnapshot.getKey());
+                    recommendedMusic.add(postSnapshot.getKey());
+                }
+
+                storageRef.child("musicRepo").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                            @Override
+                            public void onSuccess(ListResult listResult) {
+                                audioFiles=new ArrayList<>();
+                                for (StorageReference item : listResult.getItems()) {
+                                    // All the items under listRef.
+                                    for (String rec:recommendedMusic){
+                                        if (rec.equals(item.getName().replace(".mp3","")))
+                                            audioFiles.add(new AudioFile(item.getName()));
+                                    }
+                                    System.out.println("item.getName() = " + item.getName());
+                                }
+                                AudioFileAdapter adapter = new AudioFileAdapter(audioFiles,getActivity());
+                                albumRecList.setAdapter(adapter);
+                                albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Uh-oh, an error occurred!
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+
+
+
+
+
+
+
         storageRef.child("musicRepo").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                     @Override
                     public void onSuccess(ListResult listResult) {
@@ -117,6 +174,9 @@ public class HomeFragment extends Fragment {
                         // Uh-oh, an error occurred!
                     }
                 });
+
+
+
 
 
     }
