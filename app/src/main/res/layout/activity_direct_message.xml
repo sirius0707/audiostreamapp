@@ -36,4 +36,10 @@
             android:textSize="20sp"/>
     </LinearLayout>
 
+    <Button
+        android:id="@+id/newSyncRoomButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sync" />
+
 </LinearLayout>

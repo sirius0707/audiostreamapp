@@ -1,5 +1,9 @@
 package com.example.audiostreamapp.data.model;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.R;
+import com.example.audiostreamapp.syncFunction.SyncRoomActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,10 +32,12 @@ import java.util.List;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
 
     private static final String TAG = "MessageAdapter";
+    private Activity currentActivity;
 
     private ArrayList<Message> list;
-    public MessageAdapter(ArrayList<Message> list){
+    public MessageAdapter(ArrayList<Message> list,Activity currentActivity){
         this.list = list;
+        this.currentActivity=currentActivity;
     }
 
     StorageReference storageRef;
@@ -72,7 +79,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 }
             });
             holder.right_message.setText(message.getMessageTime() + "\n" + message.getContent());
-
+            if (message.getContent().contains("$%Welcomes you to Sync Room%$:")){
+                holder.right_message.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(currentActivity, SyncRoomActivity.class);
+                        intent.putExtra("Role","Visitor");
+                        intent.putExtra("RoomID",message.getContent().replace("$%Welcomes you to Sync Room%$:",""));
+                        currentActivity.startActivity(intent);
+                    }
+                });
+            }
             holder.leftLayout.setVisibility(View.GONE);
         }
         else if(user.getUid().equals(message.getReceiver())){
@@ -98,6 +115,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 }
             });
             holder.left_message.setText(message.getMessageTime() + "\n" + message.getContent());
+            if (message.getContent().contains("$%Welcomes you to Sync Room%$:")){
+                holder.left_message.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(currentActivity, SyncRoomActivity.class);
+                        intent.putExtra("Role","Visitor");
+                        intent.putExtra("RoomID",message.getContent().replace("$%Welcomes you to Sync Room%$:",""));
+                        currentActivity.startActivity(intent);
+                    }
+                });
+            }
+
             holder.rightLayout.setVisibility(View.GONE);
         }
         else
