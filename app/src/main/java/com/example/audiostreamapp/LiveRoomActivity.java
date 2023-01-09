@@ -64,6 +64,7 @@ public class LiveRoomActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
     Button btSendMs;
     EditText liveComment;
+    Button syncButton;
     private DatabaseReference mDatabase;
     boolean onButtom=true;
 
@@ -82,6 +83,7 @@ public class LiveRoomActivity extends AppCompatActivity {
         btFf = findViewById(R.id.bt_ff);
         btSendMs = findViewById(R.id.send_livechat_button);
         liveComment = findViewById(R.id.input_livechat_box);
+
         mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
@@ -100,7 +102,6 @@ public class LiveRoomActivity extends AppCompatActivity {
 
             }
         });
-
 
         // Player function
         runnable = new Runnable() {

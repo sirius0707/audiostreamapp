@@ -129,5 +129,4 @@
             android:text="Send"
             app:iconPadding="0dp" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

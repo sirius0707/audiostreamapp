@@ -89,43 +89,8 @@ public class AudioFileAdapter extends
 
             messageButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/"+nameTextView.getText());
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                        // Download url of file
-                                    String url = uri.toString();
-                                    Log.e("URL",url);
-                                    currentMediaPlayer.setMediaPlayerURL(url,(String) nameTextView.getText());
-                                    currentMediaPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-                                        @Override
-                                        public void onPrepared(MediaPlayer mp) {
-                                            mp.start();
-                                            try {
-                                                TimeUnit.MILLISECONDS.sleep(10);
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                            }
-                                            ((MainActivity)mContext).resetDurationOfAudioPlayer();
-
-                                        }
-                                    });
-
-
-                                }
-                            })
-
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.i("TAG", e.getMessage());
-                                }
-                            });
-
+                    currentMediaPlayer.changeMedia((String) nameTextView.getText());
                     nameTextView.getText();
-
                 }
             });
         }

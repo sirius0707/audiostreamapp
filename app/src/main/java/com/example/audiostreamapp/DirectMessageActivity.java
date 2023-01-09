@@ -6,26 +6,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.media.MediaPlayer;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.audiostreamapp.data.model.Message;
+import com.example.audiostreamapp.data.model.ActionWithFirebase;
 import com.example.audiostreamapp.data.model.MessageAdapter;
-import com.example.audiostreamapp.data.model.currentMediaPlayer;
-import com.example.audiostreamapp.liveComment.LiveComment;
-import com.example.audiostreamapp.liveComment.LiveCommentAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.example.audiostreamapp.syncFunction.SyncRoomActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -33,13 +25,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class DirectMessageActivity extends AppCompatActivity {
 
@@ -54,8 +42,10 @@ public class DirectMessageActivity extends AppCompatActivity {
     private EditText inputText;
     private Button send;
     private LinearLayoutManager layoutManager;
+    private Button syncButton;
 
     ArrayList<Message> items = new ArrayList<>();
+    private Activity currentActivity;
 
     boolean onButtom=true;
 
@@ -65,6 +55,7 @@ public class DirectMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_direct_message);
 
         String receiverID = getIntent().getStringExtra("receiverID");
+        currentActivity=this;
 
         inputText = findViewById(R.id.input_text);
         send = findViewById(R.id.send);
@@ -72,8 +63,19 @@ public class DirectMessageActivity extends AppCompatActivity {
         msgRecyclerView = findViewById(R.id.msg_recycler_view);
         layoutManager = new LinearLayoutManager(this);
         msgRecyclerView.setLayoutManager(layoutManager);
-        adapter = new MessageAdapter(items);
+        adapter = new MessageAdapter(items,this);
         msgRecyclerView.setAdapter(adapter);
+
+        syncButton=this.findViewById(R.id.newSyncRoomButton);
+        syncButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(currentActivity, SyncRoomActivity.class);
+                intent.putExtra("Role","Host");
+                intent.putExtra("VisiorID", receiverID);
+                startActivity(intent);
+            }
+        });
 
 
         mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
@@ -87,28 +89,7 @@ public class DirectMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String content = inputText.getText().toString();
-                long timeStamp = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-                Map<String, Object> MessageAttribute = new HashMap<>();
-                MessageAttribute.put("TimeStamp", timeStamp);
-                MessageAttribute.put("Context", content);
-                MessageAttribute.put("Sender", user.getUid());
-                MessageAttribute.put("Receiver", receiverID);
-                if(content!=null && content.length() != 0){
-                    mDatabase.child("message/" + user.getUid() + "/" + receiverID + "/" + timeStamp)
-                            .setValue(MessageAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    inputText.setText("");
-                                };
-                            });
-                    mDatabase.child("message/"+ receiverID + "/" + user.getUid() + "/" + timeStamp)
-                            .setValue(MessageAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    inputText.setText("");
-                                };
-                            });
-                }
+                ActionWithFirebase.sendMessage(user.getUid(), receiverID, content, inputText);
             }
         });
 
