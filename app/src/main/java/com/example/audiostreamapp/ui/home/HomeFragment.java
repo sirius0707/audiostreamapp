@@ -70,7 +70,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                    System.out.println("postSnapshot.getKey() = " + postSnapshot.getKey());
                     recommendedMusic.add(postSnapshot.getKey());
                 }
 
@@ -84,7 +83,6 @@ public class HomeFragment extends Fragment {
                                         if (rec.equals(item.getName().replace(".mp3","")))
                                             audioFiles.add(new AudioFile(item.getName()));
                                     }
-                                    System.out.println("item.getName() = " + item.getName());
                                 }
                                 AudioFileAdapter adapter = new AudioFileAdapter(audioFiles,getActivity());
                                 albumRecList.setAdapter(adapter);
