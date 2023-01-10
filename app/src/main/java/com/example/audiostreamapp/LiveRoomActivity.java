@@ -50,6 +50,10 @@ import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Comment;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -225,13 +229,20 @@ public class LiveRoomActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String singleComment = liveComment.getText().toString();
+                String singleCommentChanged = new String();
+                try {
+                    singleCommentChanged = Filter(singleComment);
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                }
                 long timeStamp = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
                 String key = mDatabase.child("music/"+ currentMediaPlayer.
                         getMediaName().
                         replace(".mp3","")+"/livechat").push().getKey();
                 Map<String, Object> liveCommitAttribute = new HashMap<>();
                 liveCommitAttribute.put("TimeStamp",timeStamp);
-                liveCommitAttribute.put("Context",singleComment);
+                liveCommitAttribute.put("Context",singleCommentChanged);
                 liveCommitAttribute.put("userID",uid);
                 liveCommitAttribute.put("userName",userName);
                 if(singleComment!=null && singleComment.length() != 0){
@@ -264,39 +275,74 @@ public class LiveRoomActivity extends AppCompatActivity {
         // 数据库music/歌曲.mp3/livechat中最新（最后）6个评论
         mDatabase.child("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","")+"/livechat")
                 .limitToLast(6).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // A new comment has been added, add it to the displayed list
-                Map<String,Object> comment = (Map<String,Object>) snapshot.getValue();
-                items.add(new LiveComment(comment.get("userID").toString(),
-                        Long.parseLong(comment.get("TimeStamp").toString()),
-                        comment.get("Context").toString(),
-                        comment.get("userName").toString()));
-                adapter.notifyItemRangeInserted(items.size()-1,1);
-                if (onButtom)
-                    commentList.scrollToPosition(items.size() - 1);
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        // A new comment has been added, add it to the displayed list
+                        Map<String,Object> comment = (Map<String,Object>) snapshot.getValue();
+                        items.add(new LiveComment(comment.get("userID").toString(),
+                                Long.parseLong(comment.get("TimeStamp").toString()),
+                                comment.get("Context").toString(),
+                                comment.get("userName").toString()));
+                        adapter.notifyItemRangeInserted(items.size()-1,1);
+                        if (onButtom)
+                            commentList.scrollToPosition(items.size() - 1);
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    //filter the bad words and substitute with *
+    public String Filter(String text) throws IOException {
+        boolean flag = false;
+
+        //list of bad words from https://github.com/coffee-and-fun/google-profanity-words
+        InputStream inputStream = this.getResources().openRawResource(R.raw.wordlist);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        String line;
+        ArrayList<String> wordList = new ArrayList<>();
+        while ((line = bufferedReader.readLine()) != null) {
+            wordList.add(line);
+        }
+        bufferedReader.close();
+        inputStreamReader.close();
+
+        String textChanged = "";
+        for (String textSeperated : text.split(" ")) {
+            for (String w : wordList) {
+                if (textSeperated.contains(w)) {
+                    flag = true;
+                    textSeperated = textSeperated.replace(w, "*");
+                }
+
             }
+            textChanged = textChanged + " " + textSeperated;
+        }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        if (flag == false) {
+            return text;
+        } else {
+            return textChanged.substring(1);
+        }
     }
 
     // 转换格式
@@ -332,4 +378,6 @@ public class LiveRoomActivity extends AppCompatActivity {
     private void showSnackbar(String errorMessageRes) {
         Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
+
+
 }
