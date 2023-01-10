@@ -84,6 +84,8 @@ public class HomeFragment extends Fragment {
                                             audioFiles.add(new AudioFile(item.getName()));
                                     }
                                 }
+                                if (audioFiles.size()>5)
+                                    return;
                                 AudioFileAdapter adapter = new AudioFileAdapter(audioFiles,getActivity());
                                 albumRecList.setAdapter(adapter);
                                 albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
