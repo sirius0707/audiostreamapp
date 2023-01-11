@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.DisplayProfileActivity;
 import com.example.audiostreamapp.R;
+import com.example.audiostreamapp.data.model.Message;
 import com.example.audiostreamapp.data.model.User;
 import com.example.audiostreamapp.data.model.UserAdapter;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;

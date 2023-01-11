@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     Runnable runnable;
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();;
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
 
     private Activity currentActivity;
     private ActivityMainBinding binding;
@@ -217,35 +217,27 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Map<String,Object> message = (Map<String,Object>) snapshot.getValue();
-                int latest_number = message.size();
-                int i = 0;
-                for(DataSnapshot ds : snapshot.getChildren()){
-                    i++;
-                    if(i==latest_number){
-                        if(user.getUid().equals(ds.child("Receiver").getValue().toString())) {
-                            showSnackbar("You have a new message!");
-                            createNotificationChannel();
-                            Intent intent = new Intent(currentActivity, DisplayProfileActivity.class);
-                            intent.putExtra("USERID", ds.child("Sender").getValue().toString());
-                            PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                DataSnapshot ds = snapshot.child("latest message");
+                if(user.getUid().equals(ds.child("Receiver").getValue().toString())) {
+                    showSnackbar("You have a new message!");
+                    createNotificationChannel();
+                    Intent intent = new Intent(currentActivity, DisplayProfileActivity.class);
+                    intent.putExtra("USERID", ds.child("Sender").getValue().toString());
+                    PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                            NotificationCompat.Builder builder = new NotificationCompat.Builder(currentActivity, CHANNEL_ID)
-                                    .setSmallIcon(R.mipmap.ic_launcher)
-                                    .setContentTitle("New Message Received")
-                                    .setContentText(ds.child("Context").getValue().toString())
-                                    .setColor(Color.RED)
-                                    .setNumber(12)
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                    .setContentIntent(pendingIntent)
-                                    .setAutoCancel(true);
-                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(currentActivity);
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(currentActivity, CHANNEL_ID)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle("New Message Received")
+                            .setContentText(ds.child("Context").getValue().toString())
+                            .setColor(Color.RED)
+                            .setNumber(12)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true);
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(currentActivity);
 
-                            // notificationId is a unique int for each notification that you must define
-                            notificationManager.notify(notificationId, builder.build());
-
-                        }
-                    }
+                    // notificationId is a unique int for each notification that you must define
+                    notificationManager.notify(notificationId, builder.build());
                 }
             }
 

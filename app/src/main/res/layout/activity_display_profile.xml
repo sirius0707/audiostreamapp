@@ -40,4 +40,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/Button_Block"
+        android:layout_width="150sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="160dp"
+        android:text="Block"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Button_To_Direct_Message" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
