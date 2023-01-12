@@ -25,4 +25,5 @@
     <string name="title_activity_live_audio_room">LiveAudioRoom</string>
     <string name="channel_name">ChannelN</string>
     <string name="channel_description">ChannelD</string>
+    <string name="audio_name">audioName</string>
 </resources>

@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     FirebaseStorage storage = FirebaseStorage.getInstance();
-    ArrayList<AudioFile> audioFiles;
+    public static ArrayList<AudioFile> audioFiles;
     ArrayList<AudioFile> filteredAudioFiles;
     String searchPara;
 
@@ -60,6 +60,7 @@ public class HomeFragment extends Fragment {
                         for (StorageReference item : listResult.getItems()) {
                             // All the items under listRef.
                             audioFiles.add(new AudioFile(item.getName()));
+
                         }
 
                         filteredAudioFiles = new ArrayList<>();

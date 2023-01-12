@@ -61,7 +61,9 @@ public class AudioFileAdapter extends
         TextView textView = holder.nameTextView;
         textView.setText(audioFile.getName());
         Button button = holder.messageButton;
+
         button.setText("Play");
+
     }
 
     @Override
@@ -76,6 +78,7 @@ public class AudioFileAdapter extends
         // for any view that will be set as you render a row
         public TextView nameTextView;
         public Button messageButton;
+
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview

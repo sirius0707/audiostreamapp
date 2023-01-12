@@ -1,5 +1,8 @@
 package com.example.audiostreamapp;
 
+import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
+import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
+
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 import com.example.audiostreamapp.data.model.Message;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.ui.dashboard.DashboardFragment;
+import com.example.audiostreamapp.ui.home.AudioFile;
 import com.example.audiostreamapp.ui.home.notifications.NotificationsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -44,8 +48,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String CHANNEL_ID = "ChannelID";
     int notificationId = 1;
+
+    static ArrayList<AudioFile> favList = new ArrayList<AudioFile>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -311,4 +319,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-}
+
+
+    public void addToFavorite(View view){
+//
+//        Toast.makeText(this,"button is clicked",Toast.LENGTH_SHORT).show();
+
+        //传item的audio name进来，拿这串string和audiofiles里的比较，相同就加到playlist。
+        String SongName = getMediaName();
+//        String SongName = view.getContentDescription().toString();
+        for (AudioFile af : audioFiles) {
+            boolean matcher = SongName.equals(af.getName());
+            if (matcher) {
+                favList.add(new AudioFile(af.getName()));
+            }
+        }
+        }
+
+    public void gotoFavariteActivity(View view){
+        Intent intent= new Intent(this,FavoriteActivity.class);
+        startActivity(intent);
+
+        for (int i = 0; i < MainActivity.favList.size(); i++) {
+            Log.d("testfavview", MainActivity.favList.get(i).getName());
+        }
+    }
+    }
