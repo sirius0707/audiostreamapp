@@ -105,4 +105,33 @@ public class currentMediaPlayer {
 
         return prepared;
     }
+    public static Boolean changeToMedia(String newSongName) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/"+newSongName);
+        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        // Download url of file
+                        String url = uri.toString();
+                        Log.e("URL",url);
+                        currentMediaPlayer.setMediaPlayerURL(url,(String) newSongName);
+                        currentMediaPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                            }
+                        });
+                    }
+                })
+
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i("TAG", e.getMessage());
+                    }
+                });
+
+
+        return prepared;
+
+    }
 }

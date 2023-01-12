@@ -9,11 +9,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="56dp"
+        android:layout_width="386dp"
+        android:layout_height="570dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.64"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,16 +23,27 @@
         android:id="@+id/textSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="11dp"
-        android:ems="10"
+        android:layout_marginBottom="20dp"
+        android:autofillHints=""
+        android:ems="15"
+        android:hint="Type your Search Here"
         android:inputType="textPersonName"
         android:text=""
-        android:hint="Search Area"
         app:layout_constraintBottom_toTopOf="@+id/album_list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/view_favorite_playlist"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="15dp"
+        android:onClick="gotoFavariteActivity"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="" />
+        app:srcCompat="@drawable/playlist_play_24" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

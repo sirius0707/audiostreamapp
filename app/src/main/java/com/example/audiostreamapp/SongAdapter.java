@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,8 +53,7 @@ public class SongAdapter extends RecyclerView.Adapter<MyView> {
         });
 
 
-        Button button = holder.delete_fav;
-        button.setText("Delete");
+        ImageButton imageButton = holder.delete_fav;
         holder.delete_fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

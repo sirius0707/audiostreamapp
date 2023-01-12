@@ -11,25 +11,20 @@
 
     <TextView
         android:id="@+id/audio_name"
-        android:layout_width="222dp"
-        android:layout_height="wrap_content"
+        android:layout_width="322dp"
+        android:layout_height="44dp"
         android:layout_weight="1"
-        android:contentDescription="@string/audio_name" />
+        android:contentDescription="@string/audio_name"
+        android:layout_marginHorizontal="5dp"
+        android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/live_play_button"
+    <ImageButton
+        android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
-        />
-
-    <ImageView
-        android:id="@+id/add_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_weight="1"
-        android:onClick="addToFavorite"
+        android:background="#D8D8D8"
+        android:layout_marginHorizontal="5dp"
         app:srcCompat="@drawable/add_24" />
 
 </LinearLayout>

@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private String CHANNEL_ID = "ChannelID";
     int notificationId = 1;
 
-    static ArrayList<AudioFile> favList = new ArrayList<AudioFile>();
+    public static ArrayList<AudioFile> favList = new ArrayList<AudioFile>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,20 +321,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void addToFavorite(View view){
-//
-//        Toast.makeText(this,"button is clicked",Toast.LENGTH_SHORT).show();
-
-        //传item的audio name进来，拿这串string和audiofiles里的比较，相同就加到playlist。
-        String SongName = getMediaName();
-//        String SongName = view.getContentDescription().toString();
-        for (AudioFile af : audioFiles) {
-            boolean matcher = SongName.equals(af.getName());
-            if (matcher) {
-                favList.add(new AudioFile(af.getName()));
-            }
-        }
-        }
 
     public void gotoFavariteActivity(View view){
         Intent intent= new Intent(this,FavoriteActivity.class);
