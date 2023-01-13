@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,12 +24,16 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.audiostreamapp.DisplayProfileActivity;
 import com.example.audiostreamapp.R;
+import com.example.audiostreamapp.data.model.Message;
 import com.example.audiostreamapp.data.model.User;
 import com.example.audiostreamapp.data.model.UserAdapter;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
@@ -57,19 +63,22 @@ public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
 
-    private static final String TAG = "Chat";
+    private static final String TAG = "Chatnotification";
     private Activity currentActivity;
 
     private RecyclerView userRecyclerView;
     private UserAdapter adapter;
     private LinearLayoutManager layoutManager;
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
 
     FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
+    HashMap<String, ArrayList<String>> userlist = new HashMap<String, ArrayList<String>>();
 
     ArrayList<User> items = new ArrayList<>();
 
     boolean onButtom=true;
+
+    String latest_message_from_this_user;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -90,9 +99,6 @@ public class DashboardFragment extends Fragment {
         adapter = new UserAdapter(items, getActivity());
         userRecyclerView.setAdapter(adapter);
 
-
-        mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
-
         // Display
         userRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -108,22 +114,39 @@ public class DashboardFragment extends Fragment {
         });
 
         // Get userlist
-        mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("message/" + currentuser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds:snapshot.getChildren()){
-                    //snapshot.getChildrenCount用户数量 ds.getKey()用户id ds.child("username").getValue()用户名
-                    items.add(new User(ds.getKey(), ds.child("username").getValue().toString()));
-
+                    //ds.getKey() 用户uid ds.getValue()消息列表（含latest message) ds.getValue().get("latest message").child("Context").getValue() 发送者信息
+                    Map<String,Object> message_for_this_user = (Map<String,Object>) ds.getValue();
+                    Object latest_message_for_this_user = message_for_this_user.get("latest message");
+                    items.add(new User(ds.getKey(), ((HashMap) latest_message_for_this_user).get("Context").toString()));
                     adapter.notifyItemRangeInserted(items.size()-1,1);
                     if (onButtom)
                         userRecyclerView.scrollToPosition(items.size() - 1);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+            }
+        });
+        // Set username
+        mDatabase.child("users/").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    for(int i = 0;i < items.size(); i ++){
+                        if(ds.getKey().equals(items.get(i).getUserid())){
+                            Map<String, String> userinfo = (Map<String, String>) ds.getValue();
+                            items.get(i).setUsername(userinfo.get("username"));
+                            adapter.notifyItemChanged(i);
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
 

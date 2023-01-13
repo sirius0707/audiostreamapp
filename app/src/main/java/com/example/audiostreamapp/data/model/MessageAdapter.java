@@ -3,8 +3,14 @@ package com.example.audiostreamapp.data.model;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +29,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -40,8 +49,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.currentActivity=currentActivity;
     }
 
-    StorageReference storageRef;
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -53,32 +60,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Message message = list.get(position);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        //display avatar
-        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        SpannableString message_to_show = new SpannableString(message.getMessageTime() + "\n\n" + message.getContent());
+        // 设置字体大小（相对值,单位：像素） 参数表示为默认字体大小的多少倍
+        message_to_show.setSpan(new RelativeSizeSpan(0.7f), 0, 20, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         if(user.getUid().equals(message.getSender())) {
             // Display the message layout on the right and hide the message layout on the left
             holder.rightLayout.setVisibility(View.VISIBLE);
-            // right_avatar
-            storageRef = storage.getReferenceFromUrl("gs://audiostreamapp-6a52b.appspot.com/userAvatar").child(user.getUid()+".jpg");
-            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.get().load(uri.toString()).resize(40, 40).into(holder.right_avatar);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    storageRef = storage.getReferenceFromUrl("gs://audiostreamapp-6a52b.appspot.com/userAvatar").child("Default.jpeg");
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri.toString()).resize(40, 40).into(holder.right_avatar);
-                        }
-                    });
-                }
-            });
-            holder.right_message.setText(message.getMessageTime() + "\n" + message.getContent());
+            holder.right_message.setText(message_to_show);
             if (message.getContent().contains("$%Welcomes you to Sync Room%$:")){
                 holder.right_message.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -90,31 +80,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     }
                 });
             }
+            holder.right_message.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view){
+                    Dialog d = new AlertDialog.Builder(currentActivity)
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setTitle("Recall")
+                            .setMessage("Are you sure you want to recall this user?")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+                                    mDatabase.child("message/" + user.getUid() + "/" + message.getReceiver() + "/" + message.getMessageTimeinDB()).removeValue();
+                                    mDatabase.child("message/" + message.getReceiver() + "/" + user.getUid() + "/" + message.getMessageTimeinDB()).removeValue();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                    return true;
+                }
+            });
             holder.leftLayout.setVisibility(View.GONE);
         }
         else if(user.getUid().equals(message.getReceiver())){
             // Display the message layout on the left and hide the message layout on the right
             holder.leftLayout.setVisibility(View.VISIBLE);
-            // left_avatar
-            storageRef = storage.getReferenceFromUrl("gs://audiostreamapp-6a52b.appspot.com/userAvatar").child(message.getSender()+".jpg");
-            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.get().load(uri.toString()).resize(40, 40).into(holder.left_avatar);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    storageRef = storage.getReferenceFromUrl("gs://audiostreamapp-6a52b.appspot.com/userAvatar").child("Default.jpeg");
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri.toString()).resize(40, 40).into(holder.left_avatar);
-                        }
-                    });
-                }
-            });
-            holder.left_message.setText(message.getMessageTime() + "\n" + message.getContent());
+            holder.left_message.setText(message_to_show);
             if (message.getContent().contains("$%Welcomes you to Sync Room%$:")){
                 holder.left_message.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -126,7 +117,26 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     }
                 });
             }
-
+            holder.left_message.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view){
+                    Dialog d = new AlertDialog.Builder(currentActivity)
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setTitle("Report")
+                            .setMessage("Are you sure you want to report this user?")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+                                    mDatabase.child("admin requests/" + message.getSender() + "/messages").setValue(message.getContent());
+                                    Toast.makeText(currentActivity, "Reported! We will check this user's words.", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                    return true;
+                }
+            });
             holder.rightLayout.setVisibility(View.GONE);
         }
         else
@@ -141,16 +151,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder{
         LinearLayout leftLayout, rightLayout;
         TextView left_message, right_message;
-        ImageView left_avatar, right_avatar;
 
         public ViewHolder(View view){
             super(view);
             leftLayout = view.findViewById(R.id.left_layout);
-            left_avatar = view.findViewById(R.id.left_avatar);
             left_message = view.findViewById(R.id.left_message);
             rightLayout = view.findViewById(R.id.right_layout);
             right_message = view.findViewById(R.id.right_message);
-            right_avatar = view.findViewById(R.id.right_avatar);
         }
     }
 }
