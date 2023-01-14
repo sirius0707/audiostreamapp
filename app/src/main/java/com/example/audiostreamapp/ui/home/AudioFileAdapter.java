@@ -1,7 +1,6 @@
 package com.example.audiostreamapp.ui.home;
 
 import static com.example.audiostreamapp.MainActivity.favList;
-import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
 import android.annotation.SuppressLint;
@@ -14,16 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.MainActivity;
-//import com.example.audiostreamapp.PlaySongActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -68,11 +64,8 @@ public class AudioFileAdapter extends
         // Get the data model based on position
         AudioFile audioFile = mContacts.get(position);
 
-        // Set item views based on your views and data model
         TextView textView = holder.nameTextView;
         textView.setText(audioFile.getName());
-//        Button button = holder.messageButton;
-//        button.setText("Play");
         ImageButton imageView = holder.imageButton;
         imageView.getContext();
 
@@ -100,7 +93,6 @@ public class AudioFileAdapter extends
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView nameTextView;
-//        public Button messageButton;
         public ImageButton imageButton;
 
 
@@ -113,35 +105,20 @@ public class AudioFileAdapter extends
             super(itemView);
 
             nameTextView = (TextView) itemView.findViewById(R.id.audio_name);
-//            messageButton = (Button) itemView.findViewById(R.id.live_play_button);
             imageButton = (ImageButton) itemView.findViewById(R.id.imageButton) ;
 
-//             messageButton.setOnClickListener(new View.OnClickListener() {
-//                public void onClick(View v) {
-//                    currentMediaPlayer.changeMedia((String) nameTextView.getText());
-//                    nameTextView.getText();
-//                }
-//            });
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    currentMediaPlayer.getMediaName();
-                    //boolean a =currentMediaPlayer.changeToMedia((String) nameTextView.getText());
                     String SongName = nameTextView.getText().toString();
-//                    String SongName = view.getContentDescription().toString();
                     for (AudioFile af : audioFiles) {
                         boolean matcher = SongName.equals(af.getName());
                         if (matcher) {
-
                             if(favList.contains(SongName)){
                                 break;
                             }
                             else{
                                 MainActivity.favList.add(new AudioFile(af.getName()));
-//                                //用gson，将文件转成String列表文件
-//                                Gson gson = new Gson();
-//                                String json = gson.toJson(favList);
-//                                Log.d("gson", json);
                             }
                         }
                     }
@@ -149,5 +126,4 @@ public class AudioFileAdapter extends
             });
         }
     }
-
 }

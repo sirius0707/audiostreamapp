@@ -201,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {

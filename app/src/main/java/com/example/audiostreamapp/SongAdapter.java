@@ -44,6 +44,7 @@ public class SongAdapter extends RecyclerView.Adapter<MyView> {
         TextView textView = holder.audio_name;
         textView.setText(song.getName());
 
+        //点击歌曲名播放
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

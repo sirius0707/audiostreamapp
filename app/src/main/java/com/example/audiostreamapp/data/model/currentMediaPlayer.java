@@ -26,7 +26,6 @@ public class currentMediaPlayer {
     public static boolean fromList=false;
     public static void reset(){
         mediaPlayerOnPlay.reset();
-
     }
 
     public static void create(Activity activity, int i){
@@ -50,7 +49,6 @@ public class currentMediaPlayer {
         mediaName=newName;
     }
     public static void setMediaPlayerURL(String url,String newName){
-        //fromList=false;
         mediaPlayerOnPlay.reset();
         try {
             mediaPlayerOnPlay.setDataSource(url);
@@ -144,6 +142,7 @@ public class currentMediaPlayer {
         setName(newSongName);
 
     }
+
 
 
     public static boolean isFromList() {
