@@ -47,6 +47,8 @@ public class SongAdapter extends RecyclerView.Adapter<MyView> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                currentMediaPlayer.listPosition=holder.getAdapterPosition()+1;
+                //currentMediaPlayer.listPosition=holder.getLayoutPosition();
                 currentMediaPlayer.changeMedia((String) holder.audio_name.getText());
                 holder.audio_name.getText();
             }

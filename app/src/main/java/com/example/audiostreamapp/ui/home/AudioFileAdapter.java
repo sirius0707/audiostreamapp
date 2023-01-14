@@ -7,6 +7,7 @@ import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -22,12 +23,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.MainActivity;
+//import com.example.audiostreamapp.PlaySongActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+//import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -76,6 +79,8 @@ public class AudioFileAdapter extends
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                currentMediaPlayer.fromList=false;
+
                 currentMediaPlayer.changeMedia((String) holder.nameTextView.getText());
                 holder.nameTextView.getText();
             }
@@ -121,17 +126,22 @@ public class AudioFileAdapter extends
                 @Override
                 public void onClick(View view) {
 //                    currentMediaPlayer.getMediaName();
-                    boolean a =currentMediaPlayer.changeToMedia((String) nameTextView.getText());
+                    //boolean a =currentMediaPlayer.changeToMedia((String) nameTextView.getText());
                     String SongName = nameTextView.getText().toString();
-//        String SongName = view.getContentDescription().toString();
+//                    String SongName = view.getContentDescription().toString();
                     for (AudioFile af : audioFiles) {
                         boolean matcher = SongName.equals(af.getName());
                         if (matcher) {
+
                             if(favList.contains(SongName)){
                                 break;
                             }
                             else{
                                 MainActivity.favList.add(new AudioFile(af.getName()));
+//                                //用gson，将文件转成String列表文件
+//                                Gson gson = new Gson();
+//                                String json = gson.toJson(favList);
+//                                Log.d("gson", json);
                             }
                         }
                     }
@@ -139,4 +149,5 @@ public class AudioFileAdapter extends
             });
         }
     }
+
 }

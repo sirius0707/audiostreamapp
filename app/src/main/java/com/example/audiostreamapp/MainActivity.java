@@ -1,6 +1,8 @@
 package com.example.audiostreamapp;
 
 import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
+import static com.example.audiostreamapp.data.model.currentMediaPlayer.isFromList;
+import static com.example.audiostreamapp.data.model.currentMediaPlayer.listPosition;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
 import android.app.Activity;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     Runnable runnable;
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();;
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
 
     private Activity currentActivity;
     private ActivityMainBinding binding;
@@ -199,12 +201,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                btPause.setVisibility(View.GONE);
-                btPlay.setVisibility(View.VISIBLE);
-                mediaPlayer.seekTo(0);
+                if(currentMediaPlayer.isFromList() && currentMediaPlayer.listPosition!=favList.size()){
+                    currentMediaPlayer.nextFromList(currentMediaPlayer.listPosition);
+                    currentMediaPlayer.fromList=true;
+
+                }else if(!currentMediaPlayer.isFromList() && !favList.isEmpty()){
+                    currentMediaPlayer.listPosition=0;
+                    currentMediaPlayer.nextFromList(currentMediaPlayer.listPosition);
+                    currentMediaPlayer.fromList=true;
+                }else{
+                    lastSongEnd();
+                    //currentMediaPlayer.listPosition++;
+                }
             }
         });
 
@@ -329,5 +341,11 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < MainActivity.favList.size(); i++) {
             Log.d("testfavview", MainActivity.favList.get(i).getName());
         }
+    }
+
+    public void lastSongEnd(){
+        btPause.setVisibility(View.GONE);
+        btPlay.setVisibility(View.VISIBLE);
+        mediaPlayer.seekTo(0);
     }
     }
