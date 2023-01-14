@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
@@ -8,23 +8,49 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     >
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cardCornerRadius="10dp"
+        android:layout_marginHorizontal="6dp"
+        app:cardBackgroundColor="#66FFFFFF"
+        app:cardElevation="8dp"
+        >
 
-    <TextView
-        android:id="@+id/audio_name"
-        android:layout_width="322dp"
-        android:layout_height="44dp"
-        android:layout_weight="1"
-        android:contentDescription="@string/audio_name"
-        android:layout_marginHorizontal="5dp"
-        android:textSize="18sp" />
+        <!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/live_play_button"/>-->
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="#D8D8D8"
-        android:layout_marginHorizontal="5dp"
-        app:srcCompat="@drawable/add_24" />
+        <TextView
+            android:id="@+id/audio_name"
+            android:layout_width="288dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/audio_name"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
-</LinearLayout>
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="18dp"
+            android:layout_weight="1"
+            android:background="#00FFFCFC"
+            android:layout_gravity="right"
+            android:paddingRight="20dp"
+            app:srcCompat="@drawable/add_24" />
+    </androidx.cardview.widget.CardView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

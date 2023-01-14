@@ -32,6 +32,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<AudioFile> favList = new ArrayList<AudioFile>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +100,9 @@ public class MainActivity extends AppCompatActivity {
 
         currentMediaPlayer.setMainActivity(this);
 
+
     }
+
 
     @Override
     protected void onStart() {
@@ -110,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
         btPlay = findViewById(R.id.bt_play);
         btPause = findViewById(R.id.bt_pause);
         btFf = findViewById(R.id.bt_ff);
+
+
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -204,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 btPause.setVisibility(View.GONE);
                 btPlay.setVisibility(View.VISIBLE);
-                mediaPlayer.seekTo(0);
+                mediaPlayer.seekTo(0); 
             }
         });
 

@@ -113,13 +113,7 @@ public class currentMediaPlayer {
                         // Download url of file
                         String url = uri.toString();
                         Log.e("URL",url);
-                        currentMediaPlayer.setMediaPlayerURL(url,(String) newSongName);
-                        currentMediaPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                            }
-                        });
+                        currentMediaPlayer.setDataSource(url,(String) newSongName);
                     }
                 })
 
@@ -129,9 +123,19 @@ public class currentMediaPlayer {
                         Log.i("TAG", e.getMessage());
                     }
                 });
+        return false;
+    }
 
-
-        return prepared;
+    private static void setDataSource(String url, String newSongName) {
+        mediaPlayerOnPlay.reset();
+        try {
+            mediaPlayerOnPlay.setDataSource(url);
+//            mediaPlayerOnPlay.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // wait for media player to get prepare
+        setName(newSongName);
 
     }
 }

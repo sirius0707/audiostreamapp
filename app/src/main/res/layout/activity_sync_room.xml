@@ -8,7 +8,7 @@
     tools:context=".syncFunction.SyncRoomActivity"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/design_default_color_primary"
+    android:background="@drawable/background"
     android:paddingTop="?attr/actionBarSize">
 
     <ImageView
@@ -38,7 +38,8 @@
             android:id="@+id/seek_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:outlineSpotShadowColor="@color/white"/>
 
         <TextView
             android:id="@+id/player_duration"

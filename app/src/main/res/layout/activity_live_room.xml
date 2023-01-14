@@ -8,7 +8,7 @@
     tools:context=".LiveRoomActivity"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/design_default_color_primary"
+    android:background="@drawable/background"
     android:paddingTop="?attr/actionBarSize">
 
     <ImageView
@@ -88,14 +88,14 @@
 
     <LinearLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="379dp"
-        android:layout_height="280dp"
+        android:layout_width="408dp"
+        android:layout_height="262dp"
 
         android:orientation="vertical"
         android:paddingTop="10dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@id/play_buttons_layout"
-        tools:layout_editor_absoluteX="32dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/play_buttons_layout">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/live_comment_list"
