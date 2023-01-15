@@ -2,7 +2,6 @@ package com.example.audiostreamapp;
 
 import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
 import static com.example.audiostreamapp.data.model.currentMediaPlayer.isFromList;
-import static com.example.audiostreamapp.data.model.currentMediaPlayer.listPosition;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
 import android.app.Activity;
@@ -51,6 +50,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView playerPosition,playerDuration;
     SeekBar seekBar;
-    ImageView btRew,btPlay,btPause,btFf;
+    ImageView btRew,btPlay,btPause,btFf,btPre,btNext;
 
     MediaPlayer mediaPlayer;
     Handler handler = new Handler();
@@ -112,6 +112,9 @@ public class MainActivity extends AppCompatActivity {
         btPlay = findViewById(R.id.bt_play);
         btPause = findViewById(R.id.bt_pause);
         btFf = findViewById(R.id.bt_ff);
+        btPre = findViewById(R.id.bt_pre);
+        btNext = findViewById(R.id.bt_next);
+
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -181,6 +184,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btPre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int pos = getAudioPos(currentMediaPlayer.getMediaName(),favList);
+                if(currentMediaPlayer.isFromList() && pos!=0) {
+                    pos=pos-1;
+                    mediaPlayer.reset();
+                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+                    seekBar.setMax(mediaPlayer.getDuration());
+                }else{
+                    mediaPlayer.seekTo(0);
+                }
+
+            }
+        });
+
+        btNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos = getAudioPos(currentMediaPlayer.getMediaName(),favList);
+                if(currentMediaPlayer.isFromList() && pos!=favList.size()) {
+                    pos=pos+1;
+                    mediaPlayer.reset();
+                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+
+                    seekBar.setMax(mediaPlayer.getDuration());
+                }else{
+                    mediaPlayer.stop();
+                }
+
+            }
+        });
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -204,19 +241,25 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                if(currentMediaPlayer.isFromList() && currentMediaPlayer.listPosition!=favList.size()){
-                    currentMediaPlayer.nextFromList(currentMediaPlayer.listPosition);
+                int pos=getAudioPos(currentMediaPlayer.getMediaName(),favList);
+                if(currentMediaPlayer.isFromList() && pos!=favList.size()-1){
+                    pos=pos+1;
+                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
                     currentMediaPlayer.fromList=true;
 
                 }else if(!currentMediaPlayer.isFromList() && !favList.isEmpty()){
-                    currentMediaPlayer.listPosition=0;
-                    currentMediaPlayer.nextFromList(currentMediaPlayer.listPosition);
+                    pos=0;
+                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+
                     currentMediaPlayer.fromList=true;
-                }else{
-                    lastSongEnd();
-                    //currentMediaPlayer.listPosition++;
                 }
-            }
+                //else if(currentMediaPlayer.isFromList() && currentMediaPlayer.listPosition) {}
+                else{
+                        lastSongEnd();
+
+                    }
+                }
+
         });
 
         LinearLayout audioPlayerLayout = (LinearLayout )findViewById(R.id.audioPlayerLayout);
@@ -292,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void resetDurationOfAudioPlayer(){
+        seekBar.setMax(mediaPlayer.getDuration());
         if (mediaPlayer.isPlaying())
         {
             btPlay.setVisibility(View.GONE);
@@ -347,4 +391,15 @@ public class MainActivity extends AppCompatActivity {
         btPlay.setVisibility(View.VISIBLE);
         mediaPlayer.seekTo(0);
     }
+
+    public static int getAudioPos(String audioName, List<AudioFile> audioList){
+        int pos=-1;
+        for (AudioFile af :audioList){
+            if (af.getName().equals(audioName)){
+                pos=audioList.indexOf(af);
+            }
+        }
+        return pos;
+    }
+
     }

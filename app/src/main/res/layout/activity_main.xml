@@ -43,7 +43,8 @@
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/nav_view"
-        tools:context=".ui.dashboard.DashboardFragment">
+        tools:context=".ui.dashboard.DashboardFragment"
+        tools:layout_editor_absoluteX="0dp">
 
 
         <LinearLayout
@@ -64,8 +65,7 @@
                 android:id="@+id/seek_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/player_duration"
@@ -81,6 +81,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/bt_pre"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="0"
+                app:srcCompat="@android:drawable/ic_media_previous" />
 
             <ImageView
                 android:id="@+id/bt_rew"
@@ -107,6 +114,12 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_fast_forward" />
 
+            <ImageButton
+                android:id="@+id/bt_next"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="0"
+                app:srcCompat="@android:drawable/ic_media_next" />
 
 
         </LinearLayout>

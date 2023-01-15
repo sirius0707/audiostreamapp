@@ -73,7 +73,6 @@ public class AudioFileAdapter extends
             @Override
             public void onClick(View view) {
                 currentMediaPlayer.fromList=false;
-
                 currentMediaPlayer.changeMedia((String) holder.nameTextView.getText());
                 holder.nameTextView.getText();
             }
@@ -86,6 +85,7 @@ public class AudioFileAdapter extends
     public int getItemCount() {
         return mContacts.size();
     }
+
 
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
@@ -114,7 +114,7 @@ public class AudioFileAdapter extends
                     for (AudioFile af : audioFiles) {
                         boolean matcher = SongName.equals(af.getName());
                         if (matcher) {
-                            if(favList.contains(SongName)){
+                            if(MainActivity.getAudioPos(SongName,favList)!=-1){
                                 break;
                             }
                             else{
