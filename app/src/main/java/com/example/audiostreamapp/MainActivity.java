@@ -20,6 +20,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.databinding.ActivityMainBinding;
+import com.example.audiostreamapp.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -103,9 +104,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Count play times of a song
                 Map<String, Object> updates = new HashMap<>();
-                updates.put("music/"+ currentMediaPlayer.
-                        getMediaName().
-                        replace(".mp3","")+"/playedTimes", ServerValue.increment(1));
+                if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
+                    updates.put("music/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                }else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
+                    updates.put("audiobooks/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                }else {
+                    Log.e("Storage error","Specified storage is not found");
+                }
                 mDatabase.updateChildren(updates);
 
                 //Hide play button and show pause button

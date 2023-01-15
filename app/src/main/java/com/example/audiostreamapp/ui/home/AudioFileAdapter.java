@@ -98,17 +98,31 @@ public class AudioFileAdapter extends
                 public void onClick(View v) {
                     // Count play times of a song
                     Map<String, Object> updates = new HashMap<>();
-                    updates.put("music/"+ currentMediaPlayer.
-                            getMediaName().
-                            replace(".mp3","")+"/playedTimes", ServerValue.increment(1));
-                    mDatabase.updateChildren(updates);
+                    if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
+                        updates.put("music/" + currentMediaPlayer.
+                                getMediaName().
+                                replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    }else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
+                        updates.put("audiobooks/" + currentMediaPlayer.
+                                getMediaName().
+                                replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    }else {
+                        Log.e("Storage error","Specified storage is not found");
+                    }
 
-                    // TODO Auto-generated method stub
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/"+nameTextView.getText());
+                    mDatabase.updateChildren(updates);
+                    StorageReference storageRef = null;
+                    if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
+                        storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/" + nameTextView.getText());
+                    }else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn){
+                        storageRef = FirebaseStorage.getInstance().getReference().child("audioBooks/" + nameTextView.getText());
+                    }else {
+                        Log.e("Storage error","Specified storage is not found");
+                    }
                     storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                        // Download url of file
+                                    // Download url of file
                                     String url = uri.toString();
                                     Log.e("URL",url);
                                     currentMediaPlayer.setMediaPlayerURL(url,(String) nameTextView.getText());

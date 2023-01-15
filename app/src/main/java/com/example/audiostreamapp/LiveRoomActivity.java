@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.liveComment.LiveComment;
 import com.example.audiostreamapp.liveComment.LiveCommentAdapter;
+import com.example.audiostreamapp.ui.home.HomeFragment;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -117,10 +118,18 @@ public class LiveRoomActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Count play times of a song
                 Map<String, Object> updates = new HashMap<>();
-                updates.put("music/"+ currentMediaPlayer.
-                        getMediaName().
-                        replace(".mp3","")+"/playedTimes", ServerValue.increment(1));
-                mDatabase.updateChildren(updates);
+                if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
+                    updates.put("music/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                }else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
+                    updates.put("audiobooks/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    mDatabase.updateChildren(updates);
+                }else {
+                    Log.e("Storage error","Specified storage is not found");
+                }
 
                 //Hide play button and show pause button
                 btPlay.setVisibility(View.GONE);
