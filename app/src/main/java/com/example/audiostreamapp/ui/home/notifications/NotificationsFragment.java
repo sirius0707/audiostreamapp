@@ -207,7 +207,7 @@ public class NotificationsFragment extends Fragment {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 Intent adminMode_intent = new Intent(currentActivity, AdminModeActivity.class);
-                                if(user.getUid().equals("WlljkVXWZ6gOqK5jvsGzWro7ftQ2")){
+                                if(user.getUid().equals("P3SVMDhUS7PPYu2CBKHUkLZ3Osn2")){
                                     startActivity(adminMode_intent);
                                 } else{
                                     Context context = getApplicationContext();
