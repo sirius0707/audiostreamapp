@@ -26,4 +26,5 @@
     <string name="channel_name">ChannelN</string>
     <string name="channel_description">ChannelD</string>
     <string name="audio_name">audioName</string>
+    <string name="reports">Reports</string>
 </resources>

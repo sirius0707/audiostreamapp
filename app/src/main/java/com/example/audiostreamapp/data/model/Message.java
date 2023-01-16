@@ -8,6 +8,7 @@ public class Message {
     private String sender;
     private String receiver;
     private String messageTime;
+    private long messageTimeinDB;
 
     public Message(String content,long messageTime, String sender, String receiver){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -15,6 +16,7 @@ public class Message {
         this.content = content;
         this.sender = sender;
         this.receiver = receiver;
+        this.messageTimeinDB = messageTime;
     }
 
     public String getContent() {
@@ -32,4 +34,6 @@ public class Message {
     public String getMessageTime() {
         return messageTime;
     }
+
+    public long getMessageTimeinDB() {return messageTimeinDB;}
 }

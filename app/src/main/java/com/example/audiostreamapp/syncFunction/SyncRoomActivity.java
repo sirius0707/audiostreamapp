@@ -55,6 +55,8 @@ public class SyncRoomActivity extends AppCompatActivity {
     EditText liveComment;
     boolean onButtom=true;
     String role;
+    String newSyncRoomKey;
+    ValueEventListener valueListner;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
 
@@ -193,46 +195,52 @@ public class SyncRoomActivity extends AppCompatActivity {
         });
 
 
-        RecyclerView commentList = (RecyclerView) this.findViewById(R.id.live_comment_list);
+        //first Action after enter Sync Room
+        if (role.equals("Host")){
+            //create new syncRome with State
+            newSyncRoomKey=mDatabase.child("syncRoom/").push().getKey();
+
+        }
+        else{
+            newSyncRoomKey = getIntent().getStringExtra("RoomID");
+        }
+        RecyclerView commentList = this.findViewById(R.id.live_comment_list);
         ArrayList<LiveComment> items = new ArrayList<>();
         LiveCommentAdapter adapter = new LiveCommentAdapter(items,this);
         commentList.setAdapter(adapter);
         commentList.setLayoutManager(new LinearLayoutManager(this));
+
+        // set send message button
+        // send message to database
         btSendMs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String singleComment = liveComment.getText().toString();
                 long timeStamp = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-                String key = mDatabase.child("music/"+ getMediaName().
-                        replace(".mp3","")+"/livechat").push().getKey();
+                String key = mDatabase.child("/syncRoom/" + newSyncRoomKey +"/livechat").push().getKey();
                 Map<String, Object> liveCommitAttribute = new HashMap<>();
                 liveCommitAttribute.put("TimeStamp",timeStamp);
                 liveCommitAttribute.put("Context",singleComment);
                 liveCommitAttribute.put("userID",uid);
                 liveCommitAttribute.put("userName",userName);
                 if(singleComment!=null && singleComment.length() != 0){
-                    mDatabase.child("music/"+ getMediaName().
-                            replace(".mp3","")+"/livechat/"+key).setValue(liveCommitAttribute) .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    liveComment.setText("");
-                                };
-                            });
-
+                    mDatabase.child("/syncRoom/" + newSyncRoomKey +"/livechat/" + key).setValue(liveCommitAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            liveComment.setText("");
+                        };
+                    });
                 }
             }
         });
 
-        //display live comments
-
+        //display live comments from database
         commentList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 if (!recyclerView.canScrollVertically(1)) {
                     onButtom=true;
-
                 }
                 else{
                     onButtom=false;
@@ -240,40 +248,45 @@ public class SyncRoomActivity extends AppCompatActivity {
             }
         });
 
-        boolean flag=true;
-        //init audiofile list from Firebase Storage
-        mDatabase.child("music/"+ getMediaName().
-                        replace(".mp3","")+"/livechat").limitToLast(6).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // A new comment has been added, add it to the displayed list
-                Map<String,Object> comment = (Map<String,Object>) snapshot.getValue();
-                items.add(new LiveComment(comment.get("userID").toString(),Long.parseLong(comment.get("TimeStamp").toString()),comment.get("Context").toString(),comment.get("userName").toString()));
-                adapter.notifyItemRangeInserted(items.size()-1,1);
-                if (onButtom)
-                    commentList.scrollToPosition(items.size() - 1);
-            }
+        //display live comments
+        mDatabase.child("syncRoom/" + newSyncRoomKey + "/livechat")
+                .limitToLast(6).addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        // A new comment has been added, add it to the displayed list
+                        if (snapshot != null) {
+                            Map<String, Object> comment = (Map<String, Object>) snapshot.getValue();
+                            items.add(new LiveComment(comment.get("userID").toString(),
+                                    Long.parseLong(comment.get("TimeStamp").toString()),
+                                    comment.get("Context").toString(),
+                                    comment.get("userName").toString()));
+                            adapter.notifyItemRangeInserted(items.size() - 1, 1);
+                            if (onButtom)
+                                commentList.scrollToPosition(items.size() - 1);
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        }
+                    }
 
-            }
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                    }
 
-            }
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    }
 
-            }
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                    }
 
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 
     private String convertFormat(int duration) {
@@ -281,25 +294,17 @@ public class SyncRoomActivity extends AppCompatActivity {
                 TimeUnit.MILLISECONDS.toMinutes(duration),
                 TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
     }
-    String newSyncRoomKey;
-    ValueEventListener valueListner;
+
     @Override
     protected void onStart() {
         super.onStart();
-
-        //first Action after enter Sync Room
         if (role.equals("Host")){
             //create new syncRome with State
-            newSyncRoomKey=mDatabase.child("syncRoom/").push().getKey();
             setCurrentStatus();
-
             ActionWithFirebase.sendMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),getIntent().getStringExtra("VisiorID"),
                     "$%Welcomes you to Sync Room%$:"+newSyncRoomKey,new EditText(this));
+        }
 
-        }
-        else{
-            newSyncRoomKey = getIntent().getStringExtra("RoomID");
-        }
         Map<String, Object> updates = new HashMap<>();
 
         updates.put("syncRoom/"+ newSyncRoomKey+"/visitorStatus",
