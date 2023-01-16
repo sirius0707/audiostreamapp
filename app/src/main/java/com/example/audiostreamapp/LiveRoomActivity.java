@@ -27,15 +27,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
-import com.example.audiostreamapp.databinding.ActivityMainBinding;
 import com.example.audiostreamapp.liveComment.LiveComment;
 import com.example.audiostreamapp.liveComment.LiveCommentAdapter;
-import com.example.audiostreamapp.ui.home.AudioFile;
-import com.example.audiostreamapp.ui.home.AudioFileAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.example.audiostreamapp.ui.home.HomeFragment;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -45,10 +47,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.ListResult;
-import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,6 +137,21 @@ public class LiveRoomActivity extends AppCompatActivity {
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Count play times of a song
+                Map<String, Object> updates = new HashMap<>();
+                if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
+                    updates.put("music/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                }else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
+                    updates.put("audiobooks/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    mDatabase.updateChildren(updates);
+                }else {
+                    Log.e("Storage error","Specified storage is not found");
+                }
+
                 //Hide play button and show pause button
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
@@ -246,6 +259,9 @@ public class LiveRoomActivity extends AppCompatActivity {
             }
         });
 
+
+
+
         RecyclerView commentList = (RecyclerView) this.findViewById(R.id.live_comment_list);
         ArrayList<LiveComment> items = new ArrayList<>();
         LiveCommentAdapter adapter = new LiveCommentAdapter(items,this);
@@ -290,6 +306,7 @@ public class LiveRoomActivity extends AppCompatActivity {
                                     liveComment.setText("");
                                 };
                             });
+
                 }
 
                 }else showSnackbar("You are blocked!");
@@ -298,12 +315,15 @@ public class LiveRoomActivity extends AppCompatActivity {
         });
 
         //display live comments
+
         commentList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+
                 if (!recyclerView.canScrollVertically(1)) {
                     onButtom=true;
+
                 }
                 else{
                     onButtom=false;

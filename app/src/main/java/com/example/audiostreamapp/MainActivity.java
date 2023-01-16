@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -40,7 +39,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.databinding.ActivityMainBinding;
+import com.example.audiostreamapp.ui.home.HomeFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -48,7 +50,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
+
+        mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -138,6 +145,21 @@ public class MainActivity extends AppCompatActivity {
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Count play times of a song
+                Map<String, Object> updates = new HashMap<>();
+                if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
+                    updates.put("music/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                }else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
+                    updates.put("audiobooks/" + currentMediaPlayer.
+                            getMediaName().
+                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                }else {
+                    Log.e("Storage error","Specified storage is not found");
+                }
+                mDatabase.updateChildren(updates);
+
                 //Hide play button and show pause button
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
@@ -261,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         });
+
 
         LinearLayout audioPlayerLayout = (LinearLayout )findViewById(R.id.audioPlayerLayout);
 
