@@ -256,7 +256,10 @@ public class LiveRoomActivity extends AppCompatActivity {
         mDatabase.child("reports/" + user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                user_status[0] = snapshot.child("isBlocked").getValue().toString();
+                //Initialize Admin Status
+                if(snapshot.getValue()!=null){
+                    user_status[0] = snapshot.child("isBlocked").getValue().toString();
+                }
                 Log.d("user_status", user_status[0]);
             }
             @Override
