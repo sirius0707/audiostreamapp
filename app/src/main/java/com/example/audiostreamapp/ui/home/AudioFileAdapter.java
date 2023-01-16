@@ -152,6 +152,7 @@ public class AudioFileAdapter extends
                                 }
                             });
 
+                    currentMediaPlayer.changeMedia((String) nameTextView.getText());
                     nameTextView.getText();
 
                 }

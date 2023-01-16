@@ -19,6 +19,13 @@
         android:theme="@style/Theme.AudioStreamApp"
         tools:targetApi="31">
         <activity
+            android:name=".DirectMessageActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".DisplayProfileActivity"
             android:exported="false">
             <meta-data
@@ -41,6 +48,15 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".syncFunction.SyncRoomActivity"
+            android:exported="false"
+            android:label="SyncRoom"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
         <activity
             android:name=".LoginActivity"
             android:exported="true"
