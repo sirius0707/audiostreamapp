@@ -27,7 +27,21 @@ public class ActionWithFirebase {
                             inputText.setText("");
                         };
                     });
+            mDatabase.child("message/" + senderId + "/" + receiverId + "/" + "latest message")
+                    .setValue(MessageAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            inputText.setText("");
+                        };
+                    });
             mDatabase.child("message/"+ receiverId + "/" + senderId + "/" + timeStamp)
+                    .setValue(MessageAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            inputText.setText("");
+                        };
+                    });
+            mDatabase.child("message/" + receiverId + "/" + senderId + "/" + "latest message")
                     .setValue(MessageAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {

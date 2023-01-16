@@ -1,7 +1,10 @@
 package com.example.audiostreamapp.liveComment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -24,6 +27,13 @@ import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.liveComment.LiveComment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -74,6 +84,47 @@ public class LiveCommentAdapter extends
                 showProfile.putExtra("USERID",uid);
                 mContext.startActivity(showProfile);
             }
+        });
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+        // check if user's Block status
+        String isBlocked = "unblocked";
+        mDatabase.child("reports/" + liveComment.userID + "/isBlocked").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot tasksSnapshot) {
+                for (DataSnapshot snapshot: tasksSnapshot.getChildren()) {
+                    Object isBlocked = snapshot.getValue().toString();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+           @Override
+           public boolean onLongClick(View view){
+               Dialog d = new AlertDialog.Builder(mContext)
+                       .setIcon(android.R.drawable.ic_dialog_info)
+                       .setTitle("Report")
+                       .setMessage("Are you sure you want to report this user?")
+                       .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialogInterface, int i) {
+                               FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                               mDatabase.child("reports/" + liveComment.userID + "/livecomments").setValue(liveComment.commentText);
+                               if(isBlocked.equals("blocked")) {
+                                   Toast.makeText(mContext, "This user is already blocked!", Toast.LENGTH_SHORT).show();
+                               }
+                               else {
+                                   mDatabase.child("reports/" + liveComment.userID + "/isBlocked").setValue("reported");
+                                   Toast.makeText(mContext, "Reported! We will check this user's words.", Toast.LENGTH_SHORT).show();
+                               }
+                           }
+                       })
+                       .setNegativeButton("Cancel", null)
+                       .show();
+               return true;
+           }
         });
     }
 

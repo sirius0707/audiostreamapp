@@ -235,6 +235,21 @@ public class LiveRoomActivity extends AppCompatActivity {
         LiveCommentAdapter adapter = new LiveCommentAdapter(items,this);
         commentList.setAdapter(adapter);
         commentList.setLayoutManager(new LinearLayoutManager(this));
+        final String[] user_status = {"unblocked"};
+        //get the isBlocked status
+        mDatabase.child("reports/" + user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //Initialize Admin Status
+                if(snapshot.getValue()!=null){
+                    user_status[0] = snapshot.child("isBlocked").getValue().toString();
+                }
+                Log.d("user_status", user_status[0]);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
 
         // 点击发送评论按钮
         btSendMs.setOnClickListener(new View.OnClickListener() {
@@ -250,7 +265,8 @@ public class LiveRoomActivity extends AppCompatActivity {
                 liveCommitAttribute.put("Context",singleComment);
                 liveCommitAttribute.put("userID",uid);
                 liveCommitAttribute.put("userName",userName);
-                if(singleComment!=null && singleComment.length() != 0){
+                if (!user_status[0].equals("blocked")){
+                    if(singleComment!=null && singleComment.length() != 0){
                     mDatabase.child("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","") + "/livechat/"+key)
                             .setValue(liveCommitAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -260,6 +276,9 @@ public class LiveRoomActivity extends AppCompatActivity {
                             });
 
                 }
+
+                }else showSnackbar("You are blocked!");
+
             }
         });
 
