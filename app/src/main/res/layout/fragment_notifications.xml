@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.notifications.NotificationsFragment">
+    tools:context=".ui.home.notifications.NotificationsFragment">
 
     <ImageView
         android:id="@+id/Image_Avatar"
@@ -15,6 +15,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_marginBottom="300dp" />
+
+    <Button
+        android:id="@+id/Button_To_Admin_Mode"
+        android:layout_width="150sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="195dp"
+        android:layout_marginEnd="160dp"
+        android:text="ADMIN MODE"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/Button_To_Modify_Profile"

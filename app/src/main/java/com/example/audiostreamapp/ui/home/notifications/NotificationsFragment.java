@@ -5,6 +5,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.audiostreamapp.AdminModeActivity;
 import com.example.audiostreamapp.ModifyProfileActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.databinding.FragmentNotificationsBinding;
@@ -107,7 +109,7 @@ public class NotificationsFragment extends Fragment {
         Button fileButton = (Button) view.findViewById(R.id.Button_Upload_File);
         Button resetpwdButton = (Button) view.findViewById(R.id.Button_To_Reset_PWD);
         Button signOutButton = (Button) view.findViewById(R.id.Button_Sign_Out);
-
+        Button adminModeButton = view.findViewById(R.id.Button_To_Admin_Mode);
         currentActivity = getActivity();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -185,6 +187,35 @@ public class NotificationsFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 getActivity().finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        });
+
+        // Button: Admin mode
+        adminModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialog d = new AlertDialog.Builder(currentActivity)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setTitle("Admin Mode")
+                        .setMessage("Are you sure you want to enter admin mode?")
+                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                Intent adminMode_intent = new Intent(currentActivity, AdminModeActivity.class);
+                                if(user.getUid().equals("WlljkVXWZ6gOqK5jvsGzWro7ftQ2")){
+                                    startActivity(adminMode_intent);
+                                } else{
+                                    Context context = getApplicationContext();
+                                    CharSequence text = "Sorry you don't have administrator access.";
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(context, text, duration);
+                                    toast.show();
+                                }
                             }
                         })
                         .setNegativeButton("Cancel", null)

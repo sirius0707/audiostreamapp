@@ -138,7 +138,7 @@ public class DirectMessageActivity extends AppCompatActivity {
         super.onResume();
 
         // Get admin status
-        mDatabase.child("permissions/" + user.getUid() + "/admin status").addListenerForSingleValueEvent(new ValueEventListener() {
+        /* mDatabase.child("permissions/" + user.getUid() + "/admin status").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue()==null){//Initialize Admin Status
@@ -151,7 +151,7 @@ public class DirectMessageActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
-        });
+        });  */
         // Get user status
         mDatabase.child("permissions/" + user.getUid() + "/" + receiverID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

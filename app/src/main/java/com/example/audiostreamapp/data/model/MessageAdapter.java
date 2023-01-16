@@ -86,7 +86,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     Dialog d = new AlertDialog.Builder(currentActivity)
                             .setIcon(android.R.drawable.ic_dialog_info)
                             .setTitle("Recall")
-                            .setMessage("Are you sure you want to recall this user?")
+                            .setMessage("Are you sure you want to recall this message?")
                             .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
