@@ -56,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 public class LiveRoomActivity extends AppCompatActivity {
     TextView playerPosition,playerDuration;
     SeekBar seekBar;
-    ImageView btRew,btPlay,btPause,btFf,btPre,btNext;
+    ImageView btRew,btPlay,btPause,btFf;
     Handler handler = new Handler();
     Runnable runnable;
     MediaPlayer mediaPlayer;
@@ -79,8 +79,6 @@ public class LiveRoomActivity extends AppCompatActivity {
         btPlay = findViewById(R.id.bt_play);
         btPause = findViewById(R.id.bt_pause);
         btFf = findViewById(R.id.bt_ff);
-        btPre = findViewById(R.id.bt_pre1);
-        btNext=findViewById(R.id.bt_next1);
         btSendMs = findViewById(R.id.send_livechat_button);
         liveComment = findViewById(R.id.input_livechat_box);
 
@@ -200,35 +198,6 @@ public class LiveRoomActivity extends AppCompatActivity {
             }
         });
 
-        btPre.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int pos = MainActivity.getAudioPos(currentMediaPlayer.getMediaName(),MainActivity.favList);
-                if(currentMediaPlayer.isFromList() && pos!=0) {
-                    pos=pos-1;
-                    currentMediaPlayer.changeMedia(MainActivity.favList.get(pos).getName());
-
-                }else{
-                    mediaPlayer.seekTo(0);
-                }
-            }
-
-        });
-
-        btNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                int pos = MainActivity.getAudioPos(currentMediaPlayer.getMediaName(),MainActivity.favList);
-                if(currentMediaPlayer.isFromList() && pos!=MainActivity.favList.size()) {
-                    pos=pos+1;
-
-                    currentMediaPlayer.changeMedia(MainActivity.favList.get(pos).getName());
-                }else{
-                    mediaPlayer.stop();
-                }
-            }
-        });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
