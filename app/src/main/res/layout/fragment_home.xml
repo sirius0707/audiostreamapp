@@ -9,11 +9,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_recommend_list"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="72dp"
+        android:layout_width="331dp"
+        android:layout_height="258dp"
+        android:layout_marginTop="96dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,14 +32,16 @@
             android:id="@+id/audiobookBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Audiobook" />
+            android:text="Audiobook"
+            android:textColor="@color/white"/>
 
         <RadioButton
             android:id="@+id/musicBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Music" />
+            android:text="Music"
+            android:textColor="@color/white"/>
     </RadioGroup>
 
     <TextView
@@ -56,35 +58,38 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_list"
-        android:layout_width="386dp"
-        android:layout_height="570dp"
+        android:layout_width="402dp"
+        android:layout_height="225dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="60dp"
         android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.64"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.93" />
 
     <EditText
         android:id="@+id/textSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:ems="15"
-        android:textColorHint="@color/white"
         android:hint="Type your Search Here"
-        android:layout_marginTop="20dp"
         android:inputType="textPersonName"
         android:paddingTop="40dp"
         android:text=""
         android:textColor="@color/white"
+        android:textColorHint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/album_list"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/album_recommend_list"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:id="@+id/view_favorite_playlist"
