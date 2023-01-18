@@ -3,6 +3,7 @@ package com.example.audiostreamapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -91,6 +92,7 @@ public class DirectMessageActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         // Show message
         mDatabase.child("message/" + user.getUid() + "/" + receiverID).limitToLast(20).addChildEventListener(new ChildEventListener() {

@@ -7,11 +7,14 @@
     android:background="@drawable/background"
     tools:context=".ui.home.HomeFragment">
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_recommend_list"
         android:layout_width="405dp"
         android:layout_height="140dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="116dp"
+        android:layout_marginRight="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -56,52 +59,56 @@
         android:text=""
         android:textColor="@color/white"
         android:textColorHint="@color/white"
+        android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/contentModeBtn" />
 
 
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Recommended Music"
+        android:text="Recommended for you"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/album_recommend_list"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.943"
-        app:layout_constraintHorizontal_bias="0.1"/>
+        tools:textStyle="bold" />
+
     <TextView
         android:id="@+id/album_list_View"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Audio"
+        android:text="Audios..."
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/album_list"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.943"
-        app:layout_constraintHorizontal_bias="0.1"/>
+        tools:textStyle="bold" />
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_list"
         android:layout_width="409dp"
         android:layout_height="433dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="60dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:fitsSystemWindows="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.873" />
+        app:layout_constraintVertical_bias="0.882" />
 
     <ImageView
         android:id="@+id/view_favorite_playlist"
