@@ -45,6 +45,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     public static ArrayList<AudioFile> audioFiles;
+    public static ArrayList<AudioFile> recAudioFiles;
     ArrayList<AudioFile> filteredAudioFiles;
     ArrayList<String> recommendedMusic;
     ArrayList<String> recommendedAudioBooks;
@@ -95,19 +96,19 @@ public class HomeFragment extends Fragment {
                         storageRef.child("musicRepo").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                                     @Override
                                     public void onSuccess(ListResult listResult) {
-                                        audioFiles=new ArrayList<>();
+                                        recAudioFiles=new ArrayList<>();
                                         for (StorageReference item : listResult.getItems()) {
                                             // All the items under listRef.
                                             for (String rec:recommendedMusic){
                                                 if (rec.equals(item.getName().replace(".mp3","")))
-                                                    audioFiles.add(new AudioFile(item.getName()));
+                                                    recAudioFiles.add(new AudioFile(item.getName()));
                                             }
                                         }
 
                                         // Delete redundant data due to repeated name
                                         List<AudioFile> distinctAudioFiles = null;
                                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                            distinctAudioFiles = audioFiles.stream().collect(
+                                            distinctAudioFiles = recAudioFiles.stream().collect(
                                                     collectingAndThen(toCollection(() ->
                                                             new TreeSet<>(comparing(AudioFile::getName))), ArrayList::new));
                                         }
