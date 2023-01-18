@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -96,6 +97,8 @@ public class DashboardFragment extends Fragment {
         userRecyclerView = (RecyclerView) view.findViewById(R.id.user_recycler_view);
         layoutManager = new LinearLayoutManager(getContext());
         userRecyclerView.setLayoutManager(layoutManager);
+        RecyclerView.ItemDecoration itemDecoration=new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL);
+        userRecyclerView.addItemDecoration(itemDecoration);
         adapter = new UserAdapter(items, getActivity());
         userRecyclerView.setAdapter(adapter);
 
@@ -112,6 +115,7 @@ public class DashboardFragment extends Fragment {
                 }
             }
         });
+
 
         // Get userlist
         mDatabase.child("message/" + currentuser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -145,6 +149,9 @@ public class DashboardFragment extends Fragment {
                     }
                 }
             }
+
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
