@@ -37,8 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class AudioFileAdapter extends
-        RecyclerView.Adapter<AudioFileAdapter.ViewHolder> {
+public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.ViewHolder> {
 
     // Store a member variable for the contacts
     private List<AudioFile> mContacts;
