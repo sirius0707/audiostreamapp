@@ -48,16 +48,18 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
-    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();;
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
 
     public static ArrayList<AudioFile> audioFiles;
     public static ArrayList<AudioFile> recAudioFiles;
+    public static ArrayList<AudioFile> recAudioBooks;
     ArrayList<AudioFile> filteredAudioFiles;
     ArrayList<String> recommendedMusic;
     ArrayList<String> recommendedAudioBooks;
     String searchPara;
+    public static ArrayList<AudioFile> Search;
 
     public static RadioGroup contentMode;
     int limit = 5;
@@ -70,11 +72,8 @@ public class HomeFragment extends Fragment {
     Activity currentActivity=this.getActivity();
 
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-
         return binding.getRoot();
     }
 
@@ -84,133 +83,89 @@ public class HomeFragment extends Fragment {
         super.onStart();
         textSearch = getView().findViewById(R.id.textSearch);
         contentMode = getView().findViewById(R.id.contentModeBtn);
-        nestedScrollView = (NestedScrollView) this.getView().findViewById(R.id.scroll_view);
-        albumList = (RecyclerView) this.getView().findViewById(R.id.album_list);
-        RecyclerView albumRecList = (RecyclerView) this.getView().findViewById(R.id.album_recommend_list);
+        nestedScrollView = getView().findViewById(R.id.scroll_view);
+        albumList = getView().findViewById(R.id.album_list);
+        RecyclerView albumRecList = getView().findViewById(R.id.album_recommend_list);
+
 
         //init audiofile list from Firebase Storage
         Query musicQuery = mDatabase.child("music/").orderByChild("playedTimes").limitToLast(5);
         Query audioBooksQuery = mDatabase.child("audiobooks/").orderByChild("playedTimes").limitToLast(5);
+
+        pageToken = null;
         audioFiles = new ArrayList<>();
+        filteredAudioFiles = new ArrayList<>();
         recommendedMusic = new ArrayList<>();
         recommendedAudioBooks = new ArrayList<>();
 
-        // After opening fragment, invoke this
-        int checkedButton = contentMode.getCheckedRadioButtonId();
-        switch(checkedButton){
-            case R.id.musicBtn:
-                //Recommand music
-                musicQuery.addValueEventListener(new ValueEventListener() {
+        Search = new ArrayList<>();
 
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                            recommendedMusic.add(postSnapshot.getKey());
-                        }
+        musicQuery.addValueEventListener(new ValueEventListener() {
 
-                        storageRef.child("musicRepo").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                                    @Override
-                                    public void onSuccess(ListResult listResult) {
-                                        recAudioFiles=new ArrayList<>();
-                                        for (StorageReference item : listResult.getItems()) {
-                                            // All the items under listRef.
-                                            for (String rec:recommendedMusic){
-                                                if (rec.equals(item.getName().replace(".mp3","")))
-                                                    recAudioFiles.add(new AudioFile(item.getName()));
-                                            }
-                                        }
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    recommendedMusic.add(postSnapshot.getKey());
+                }
 
-                                        // Delete redundant data due to repeated name
-                                        List<AudioFile> distinctAudioFiles = null;
-                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                            distinctAudioFiles = recAudioFiles.stream().collect(
-                                                    collectingAndThen(toCollection(() ->
-                                                            new TreeSet<>(comparing(AudioFile::getName))), ArrayList::new));
-                                        }
-
-                                        AudioFileAdapter adapter = new AudioFileAdapter(distinctAudioFiles,getActivity());
-                                        albumRecList.setAdapter(adapter);
-                                        albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
+                storageRef.child("musicRepo").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                            @Override
+                            public void onSuccess(ListResult listResult) {
+                                recAudioFiles=new ArrayList<>();
+                                for (StorageReference item : listResult.getItems()) {
+                                    // All the items under listRef.
+                                    for (String rec:recommendedMusic){
+                                        if (rec.equals(item.getName().replace(".mp3","")))
+                                            recAudioFiles.add(new AudioFile(item.getName()));
                                     }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Uh-oh, an error occurred!
-                                    }
-                                });
-                    }
+                                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
-                });
+                                // Delete redundant data due to repeated name
+                                List<AudioFile> distinctAudioFiles = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                    distinctAudioFiles = recAudioFiles.stream().collect(
+                                            collectingAndThen(toCollection(() ->
+                                                    new TreeSet<>(comparing(AudioFile::getName))), ArrayList::new));
+                                }
 
-                pageToken = null;
-                filteredAudioFiles = new ArrayList<>();
-                getAudioFile("musicRepo", limit);
-
-                nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-                    @Override
-                    public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                        if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
-                            //Toast.makeText(getApplicationContext(), "Next Page!", Toast.LENGTH_SHORT).show();
-                            if (pageToken != null) {
-                                Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
-                                getAudioFile("musicRepo", limit);
+                                AudioFileAdapter adapter = new AudioFileAdapter(distinctAudioFiles,getActivity());
+                                albumRecList.setAdapter(adapter);
+                                albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
                             }
-                        }
-                    }
-                });
-
-                searchPara = new String();
-                // Listen if search area is changed
-                textSearch.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        searchPara = charSequence.toString();
-                        // Fuzzy query
-                        Pattern pattern = Pattern.compile(searchPara, Pattern.CASE_INSENSITIVE);
-                        filteredAudioFiles.clear();
-                        for (AudioFile af : audioFiles) {
-                            Matcher matcher = pattern.matcher(af.getName());
-
-                            if (matcher.find()) {
-                                filteredAudioFiles.add(new AudioFile(af.getName()));
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Uh-oh, an error occurred!
                             }
-                        }
+                        });
+            }
 
-                        AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
-                        albumList.setAdapter(adapter);
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
 
-                    }
+        // Pagination: Show first "limit" files
+        getAudioFile("musicRepo", limit);
+        // Scroll to get more files
+        ScrollListener("musicRepo");
+        // Search
+        getSearchResult("musicRepo");
 
-                    @Override
-                    public void afterTextChanged(Editable editable) {}
-                });
+        AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
+        albumList.setAdapter(adapter);
+        albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
 
-                AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
-                albumList.setAdapter(adapter);
-                albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
-
-
-                break;
-            case R.id.audiobookBtn:
-                System.out.println("R.id.audiobookBtn");
-                break;
-            default:
-                break;
-        }
 
         // When changing buttons, invoke this
         contentMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                pageToken = null;
+                audioFiles =  new ArrayList<>();
+                filteredAudioFiles = new ArrayList<>();
                 switch (checkedId){
                     case R.id.musicBtn:
-                        //Recommand music
                         musicQuery.addValueEventListener(new ValueEventListener() {
 
                             @Override
@@ -258,28 +213,15 @@ public class HomeFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError error) {}
                         });
 
-                        pageToken = null;
-                        audioFiles =  new ArrayList<>();
-                        filteredAudioFiles = new ArrayList<>();
                         AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
                         albumList.setAdapter(adapter);
                         albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
                         getAudioFile("musicRepo", limit);
+                        ScrollListener("musicRepo");
+                        getSearchResult("musicRepo");
 
-                        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-                            @Override
-                            public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                                if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
-                                    if (pageToken != null) {
-                                        Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
-                                        getAudioFile("musicRepo", limit);
-                                    }
-                                }
-                            }
-                        });
                         break;
                     case R.id.audiobookBtn:
-                        //Recommand audioBook
                         audioBooksQuery.addValueEventListener(new ValueEventListener() {
 
                             @Override
@@ -293,18 +235,18 @@ public class HomeFragment extends Fragment {
                                 storageRef.child("audioBooks").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                                             @Override
                                             public void onSuccess(ListResult listResult) {
-                                                audioFiles=new ArrayList<>();
+                                                recAudioBooks=new ArrayList<>();
                                                 for (StorageReference item : listResult.getItems()) {
                                                     // All the items under listRef.
                                                     for (String rec:recommendedAudioBooks){
                                                         if (rec.equals(item.getName().replace(".mp3","")))
-                                                            audioFiles.add(new AudioFile(item.getName()));
+                                                            recAudioBooks.add(new AudioFile(item.getName()));
                                                     }
                                                 }
                                                 // Delete redundant data due to repeated name
                                                 List<AudioFile> distinctAudioFiles = null;
                                                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                                    distinctAudioFiles = audioFiles.stream().collect(
+                                                    distinctAudioFiles = recAudioBooks.stream().collect(
                                                             collectingAndThen(toCollection(() ->
                                                                     new TreeSet<>(comparing(AudioFile::getName))), ArrayList::new));
                                                 }
@@ -327,25 +269,13 @@ public class HomeFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError error) {}
                         });
 
-                        pageToken = null;
-                        audioFiles =  new ArrayList<>();
-                        filteredAudioFiles = new ArrayList<>();
                         AudioFileAdapter audiobook_adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
                         albumList.setAdapter(audiobook_adapter);
                         albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
                         getAudioFile("audioBooks", limit);
+                        ScrollListener("audioBooks");
+                        getSearchResult("audioBooks");
 
-                        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-                            @Override
-                            public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                                if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
-                                    if (pageToken != null) {
-                                        Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT).show();
-                                        getAudioFile("audioBooks", limit);
-                                    }
-                                }
-                            }
-                        });
                         break;
                     default:
                         break;
@@ -383,6 +313,73 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
+    }
+
+    private void ScrollListener(String type){
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
+                    if (pageToken != null) {
+                        showSnackbar("Loading...");
+                        getAudioFile(type, limit);
+                    }
+                    else
+                        showSnackbar("End");
+                }
+            }
+        });
+    }
+
+    private void getSearchResult(String type) {
+        Search.clear();
+        storageRef.child(type).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @Override
+            public void onSuccess(ListResult listResult) {
+                for (StorageReference item : listResult.getItems()) {
+                    // All the items under listRef.
+                    Search.add(new AudioFile(item.getName()));
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showSnackbar("Error: Can't get the data from database!");
+            }
+        });
+        // Listen if search area is changed
+        searchPara = new String();
+        textSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                searchPara = charSequence.toString();
+                // Fuzzy query
+                Pattern pattern = Pattern.compile(searchPara, Pattern.CASE_INSENSITIVE);
+                filteredAudioFiles.clear();
+                for (AudioFile af : Search) {
+                    Matcher matcher = pattern.matcher(af.getName());
+
+                    if (matcher.find()) {
+                        filteredAudioFiles.add(new AudioFile(af.getName()));
+                    }
+                }
+
+                AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
+                albumList.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+    }
+
+    // Show message
+    private void showSnackbar(String errorMessageRes) {
+        Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
 
     @Override
