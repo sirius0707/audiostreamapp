@@ -135,13 +135,7 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer = currentMediaPlayer.getMediaPlayer();
         resetDurationOfAudioPlayer();
         //Get duration
-        int duration = mediaPlayer.getDuration();
-        //Convert millisecond to minute and second
-        String sDuration = convertFormat(duration);
-        Log.e("Duration",sDuration);
-        //Set duration on text view
-        playerDuration.setText(sDuration);
-        playerPosition.setText(convertFormat(mediaPlayer.getCurrentPosition()));
+
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -350,6 +344,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void resetDurationOfAudioPlayer(){
+        int duration = mediaPlayer.getDuration();
+        //Convert millisecond to minute and second
+        String sDuration = convertFormat(duration);
         seekBar.setMax(mediaPlayer.getDuration());
         if (mediaPlayer.isPlaying())
         {
@@ -359,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(runnable,0);
         }
         seekBar.setMax(mediaPlayer.getDuration());
+        playerDuration.setText(sDuration);
+        playerPosition.setText(convertFormat(mediaPlayer.getCurrentPosition()));
 
     }
 

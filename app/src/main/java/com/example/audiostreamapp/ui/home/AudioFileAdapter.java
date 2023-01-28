@@ -74,7 +74,7 @@ public class AudioFileAdapter extends
         AudioFile audioFile = mContacts.get(position);
 
         TextView textView = holder.nameTextView;
-        textView.setText(audioFile.getName());
+        textView.setText(audioFile.getName().replace(".mp3",""));
         ImageButton imageView = holder.imageButton;
         imageView.getContext();
 
@@ -98,9 +98,9 @@ public class AudioFileAdapter extends
                 mDatabase.updateChildren(updates);
                 StorageReference storageRef = null;
                 if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/" + textView.getText());
+                    storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/" + textView.getText() + ".mp3");
                 } else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("audioBooks/" + textView.getText());
+                    storageRef = FirebaseStorage.getInstance().getReference().child("audioBooks/" + textView.getText() + ".mp3");
                 } else {
                     Log.e("Storage error", "Specified storage is not found");
                 }
@@ -171,7 +171,7 @@ public class AudioFileAdapter extends
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String SongName = nameTextView.getText().toString();
+                    String SongName = nameTextView.getText().toString()+ ".mp3";
                     for (AudioFile af : audioFiles) {
                         boolean matcher = SongName.equals(af.getName());
                         if (matcher) {

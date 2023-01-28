@@ -66,7 +66,6 @@ public class LiveRoomActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
     Button btSendMs;
     EditText liveComment;
-    Button syncButton;
     private DatabaseReference mDatabase;
     boolean onButtom=true;
 
