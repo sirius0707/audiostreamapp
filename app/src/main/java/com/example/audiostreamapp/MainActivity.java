@@ -302,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                     createNotificationChannel();
                     Intent intent = new Intent(currentActivity, DisplayProfileActivity.class);
                     intent.putExtra("USERID", ds.child("Sender").getValue().toString());
-                    PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(currentActivity, CHANNEL_ID)
                             .setSmallIcon(R.mipmap.ic_launcher)
