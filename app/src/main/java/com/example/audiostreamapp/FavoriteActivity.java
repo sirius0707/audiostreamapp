@@ -28,8 +28,6 @@ public class FavoriteActivity extends AppCompatActivity {
     RecyclerView favList;
     SongAdapter songAdapter;
 
-    private ArrayList<AudioFile> songs;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +37,11 @@ public class FavoriteActivity extends AppCompatActivity {
         favList = findViewById(R.id.recycleView);
         setTitle("Playlist");
 
-
-//
-//        RecyclerView favList = (RecyclerView) this.getView().findViewById(R.id.recycleView);
-//        Activity currentActivity=this.getActivity();
-
         songAdapter = new SongAdapter(MainActivity.favList);
 
         favList.setAdapter(songAdapter);
 
         favList.setLayoutManager(new LinearLayoutManager(this));
-        }
-
-
-    public void removeAll(View view)
-        {
-            MainActivity.favList.clear();
-            songAdapter.notifyDataSetChanged();
         }
 
     public void removeALl(View view) {
