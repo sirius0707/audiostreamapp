@@ -368,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Show message
-    private void showSnackbar(String errorMessageRes) {
+    public void showSnackbar(String errorMessageRes) {
         Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
 

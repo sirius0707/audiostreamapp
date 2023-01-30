@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.audiostreamapp.AdminModeActivity;
@@ -73,23 +74,9 @@ public class NotificationsFragment extends Fragment {
             Uri file = null;
             if (resultData != null) {
                 file = resultData.getData();
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/"+new File(file.getPath()).getName());
-                UploadTask uploadTask = storageRef.putFile(file);
+                DialogFragment dialogEvent = UploadDialogFragment.newInstance(file);
+                dialogEvent.show(getActivity().getSupportFragmentManager(), "uploadDialog");
 
-// Register observers to listen for when the download is done or if it fails
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                        // ...
-                    }
-                });
-                // Perform operations on the document using its URI.
             }
         }
     }
