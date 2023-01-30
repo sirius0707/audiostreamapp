@@ -63,6 +63,7 @@
         <ImageView
             android:id="@+id/bt_rew"
             android:layout_width="60dp"
+            android:layout_gravity="center_vertical"
             android:layout_height="60dp"
             android:src="@drawable/ic_fast_rewind" />
 
@@ -70,22 +71,23 @@
             android:id="@+id/bt_play"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_play" />
 
         <ImageView
             android:id="@+id/bt_pause"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_pause"
             android:visibility="gone" />
 
         <ImageView
             android:id="@+id/bt_ff"
             android:layout_width="60dp"
+            android:layout_gravity="center_vertical"
             android:layout_height="60dp"
             android:src="@drawable/ic_fast_forward" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -102,7 +104,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/live_comment_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="273dp" />
 
 
     </LinearLayout>
@@ -111,7 +113,6 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/white"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -119,16 +120,23 @@
             android:id="@+id/input_livechat_box"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_border"
+            android:gravity="center_vertical"
+            android:hint="Type message here"
+            android:maxLines="2"
+            android:textAllCaps="false"
+            android:textColorHint="#4D000000" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/send_livechat_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_nor_down"
             android:scrollbarSize="4dp"
-            android:text="Send"
-            app:iconPadding="0dp" />
+            android:text="Send" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

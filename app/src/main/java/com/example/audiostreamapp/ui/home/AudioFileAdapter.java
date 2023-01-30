@@ -1,5 +1,6 @@
 package com.example.audiostreamapp.ui.home;
 
+
 import static com.example.audiostreamapp.MainActivity.favList;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -70,6 +72,15 @@ public class AudioFileAdapter extends
     @SuppressLint("ResourceType")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (position ==0){
+            holder.container.setBackgroundResource(R.drawable.round_color_top);
+        }
+
+        if(position == mContacts.size()-1 ){
+            holder.container.setBackgroundResource(R.drawable.round_corner_bottom);
+            holder.divider.setVisibility(View.GONE);
+        }
+
         // Get the data model based on position
         AudioFile audioFile = mContacts.get(position);
 
@@ -77,6 +88,7 @@ public class AudioFileAdapter extends
         textView.setText(audioFile.getName().replace(".mp3",""));
         ImageButton imageView = holder.imageButton;
         imageView.getContext();
+
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,6 +169,8 @@ public class AudioFileAdapter extends
         public TextView nameTextView;
         public ImageButton imageButton;
         public Button messageButton;
+        RelativeLayout container;
+        View divider;
 
 
         // We also create a constructor that accepts the entire item row
@@ -165,6 +179,9 @@ public class AudioFileAdapter extends
             // Stores the itemView in a public final member variable that can be used
             // to access the context from any ViewHolder instance.
             super(itemView);
+
+            container = itemView.findViewById(R.id.container);
+            divider = itemView.findViewById(R.id.divider);
 
             nameTextView = (TextView) itemView.findViewById(R.id.audio_name);
             imageButton = (ImageButton) itemView.findViewById(R.id.imageButton);

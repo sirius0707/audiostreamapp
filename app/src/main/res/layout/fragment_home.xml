@@ -8,16 +8,7 @@
     tools:context=".ui.home.HomeFragment">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/album_recommend_list"
-        android:layout_width="405dp"
-        android:layout_height="140dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginRight="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
     <RadioGroup
         android:id="@+id/contentModeBtn"
@@ -40,86 +31,102 @@
 
         <RadioButton
             android:id="@+id/musicBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="82dp"
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="Music"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
     </RadioGroup>
+
+
+    <ImageView
+        android:id="@+id/search"
+        android:layout_width="39dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/textSearch"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/search" />
+
 
     <EditText
         android:id="@+id/textSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="190dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/searcg_border"
         android:ems="15"
         android:hint="Type your Search Here"
         android:inputType="textPersonName"
         android:text=""
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="#80FFFFFF"
         android:textStyle="italic"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contentModeBtn" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.625"
+        app:layout_constraintStart_toEndOf="@+id/contentModeBtn"
+        tools:layout_editor_absoluteY="8dp" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Recommended for you"
+        android:text="Guess you like"
         android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/album_recommend_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.017"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.943"
+        app:layout_constraintTop_toBottomOf="@+id/contentModeBtn"
+        app:layout_constraintVertical_bias="0.534"
         tools:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/album_recommend_list"
+        android:layout_width="401dp"
+        android:layout_height="107dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
 
     <TextView
         android:id="@+id/album_list_View"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Audios..."
+        android:text="Audios"
+
         android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/album_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.025"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.943"
+        app:layout_constraintTop_toBottomOf="@+id/album_recommend_list"
         tools:textStyle="bold" />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_list"
-        android:layout_width="409dp"
-        android:layout_height="433dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="10dp"
+        android:layout_width="398dp"
+        android:layout_height="358dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
         android:fitsSystemWindows="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintHorizontal_bias="0.48"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.882" />
+        app:layout_constraintTop_toBottomOf="@+id/album_list_View"
+        app:layout_constraintVertical_bias="0.677" />
 
-    <ImageView
-        android:id="@+id/view_favorite_playlist"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="gotoFavariteActivity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/playlist_play_24" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

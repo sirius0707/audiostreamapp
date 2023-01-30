@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d8e0e8"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".ui.dashboard.DashboardFragment" >
+    tools:context=".ui.dashboard.DashboardFragment"
+    android:background="@drawable/background">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/user_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:layout_marginTop="3dp"/>
 </LinearLayout>
