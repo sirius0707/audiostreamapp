@@ -60,7 +60,7 @@ public class SongAdapter extends RecyclerView.Adapter<MyView> {
             public void onClick(View view) {
                 //currentMediaPlayer.listPosition=holder.getAdapterPosition();
 
-                currentMediaPlayer.changeMedia((String) holder.audio_name.getText());
+                currentMediaPlayer.changeMedia("musicRepo",(String) holder.audio_name.getText());
                 currentMediaPlayer.fromList=true;
                 holder.audio_name.getText();
             }

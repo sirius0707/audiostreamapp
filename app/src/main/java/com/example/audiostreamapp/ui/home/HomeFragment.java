@@ -1,5 +1,6 @@
 package com.example.audiostreamapp.ui.home;
 
+import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.databinding.FragmentHomeBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +41,10 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,8 +58,6 @@ public class HomeFragment extends Fragment {
     StorageReference storageRef = storage.getReference();
 
     public static ArrayList<AudioFile> audioFiles;
-    public static ArrayList<AudioFile> recAudioFiles;
-    public static ArrayList<AudioFile> recAudioBooks;
     ArrayList<AudioFile> filteredAudioFiles;
     ArrayList<String> recommendedMusic;
     ArrayList<String> recommendedAudioBooks;
@@ -68,6 +71,7 @@ public class HomeFragment extends Fragment {
     NestedScrollView nestedScrollView;
     EditText textSearch;
     RecyclerView albumList;
+    RecyclerView albumRecList;
 
     Activity currentActivity=this.getActivity();
 
@@ -77,6 +81,95 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    private void changeType(Query newTypeQuery,Query BiRecommendQuery,String repoName){
+        Log.e("hier",newTypeQuery.toString());
+        BiRecommendQuery.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    recommendedMusic.clear();
+                    for (DataSnapshot postSnapshot: task.getResult().getChildren()) {
+                        recommendedMusic.add(postSnapshot.getKey());
+                    }
+                    newTypeQuery.limitToLast(6-recommendedMusic.size()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (!task.isSuccessful()) {
+                                Log.e("firebase", "Error getting data", task.getException());
+                            }
+                            else {
+                                Log.e("hier",task.getResult().getKey());
+                                for (DataSnapshot postSnapshot: task.getResult().getChildren()) {
+                                    recommendedMusic.add(postSnapshot.getKey());
+                                }
+
+                                storageRef.child(repoName).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                                            @Override
+                                            public void onSuccess(ListResult listResult) {
+                                                ArrayList<AudioFile> recAudioFiles=new ArrayList<>();
+                                                for (String rec:recommendedMusic){
+                                                    for (StorageReference item : listResult.getItems()) {
+                                                        // All the items under listRef.
+                                                        if (rec.equals(item.getName().replace(".mp3","")))
+                                                            recAudioFiles.add(new AudioFile(item.getName()));
+                                                    }
+                                                }
+
+                                                // Delete redundant data due to repeated name
+                                                //Collections.reverse(recAudioFiles);
+                                                AudioFileAdapter adapter = new AudioFileAdapter(recAudioFiles,getActivity());
+                                                albumRecList.setAdapter(adapter);
+                                                albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Uh-oh, an error occurred!
+                                            }
+                                        });
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+
+
+        // Pagination: Show first "limit" files
+        getAudioFile(repoName, limit);
+        // Scroll to get more files
+        ScrollListener(repoName);
+        // Search
+        getSearchResult(repoName);
+
+        AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
+        albumList.setAdapter(adapter);
+        albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
+    }
+
+    private void checkStatueAndRefresh(){
+        Query musicQuery = mDatabase.child("music/").orderByChild("playedTimes");
+        Query audioBooksQuery = mDatabase.child("audiobooks/").orderByChild("playedTimes");
+        Query BiRecommendQuery = mDatabase.child("recommend/"+getMediaName().replace(".mp3","")).orderByValue().limitToLast(5);
+        switch (contentMode.getCheckedRadioButtonId()){
+            case R.id.musicBtn:
+                changeType(musicQuery,BiRecommendQuery,"musicRepo");
+                break;
+            case R.id.audiobookBtn:
+                changeType(audioBooksQuery,BiRecommendQuery,"audioBooks");
+
+                break;
+            default:
+                break;
+        }
+    }
+
+
 
     @Override
     public void onStart() {
@@ -85,12 +178,18 @@ public class HomeFragment extends Fragment {
         contentMode = getView().findViewById(R.id.contentModeBtn);
         nestedScrollView = getView().findViewById(R.id.scroll_view);
         albumList = getView().findViewById(R.id.album_list);
-        RecyclerView albumRecList = getView().findViewById(R.id.album_recommend_list);
+        albumRecList = getView().findViewById(R.id.album_recommend_list);
+        getView().findViewById(R.id.RecommendTextView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkStatueAndRefresh();
+            }
+        });
 
 
         //init audiofile list from Firebase Storage
-        Query musicQuery = mDatabase.child("music/").orderByChild("playedTimes").limitToLast(5);
-        Query audioBooksQuery = mDatabase.child("audiobooks/").orderByChild("playedTimes").limitToLast(5);
+
+
 
         pageToken = null;
         audioFiles = new ArrayList<>();
@@ -100,61 +199,7 @@ public class HomeFragment extends Fragment {
 
         Search = new ArrayList<>();
 
-        musicQuery.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                    recommendedMusic.add(postSnapshot.getKey());
-                }
-
-                storageRef.child("musicRepo").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                            @Override
-                            public void onSuccess(ListResult listResult) {
-                                recAudioFiles=new ArrayList<>();
-                                for (StorageReference item : listResult.getItems()) {
-                                    // All the items under listRef.
-                                    for (String rec:recommendedMusic){
-                                        if (rec.equals(item.getName().replace(".mp3","")))
-                                            recAudioFiles.add(new AudioFile(item.getName()));
-                                    }
-                                }
-
-                                // Delete redundant data due to repeated name
-                                List<AudioFile> distinctAudioFiles = null;
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                    distinctAudioFiles = recAudioFiles.stream().collect(
-                                            collectingAndThen(toCollection(() ->
-                                                    new TreeSet<>(comparing(AudioFile::getName))), ArrayList::new));
-                                }
-
-                                AudioFileAdapter adapter = new AudioFileAdapter(distinctAudioFiles,getActivity());
-                                albumRecList.setAdapter(adapter);
-                                albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Uh-oh, an error occurred!
-                            }
-                        });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
-
-        // Pagination: Show first "limit" files
-        getAudioFile("musicRepo", limit);
-        // Scroll to get more files
-        ScrollListener("musicRepo");
-        // Search
-        getSearchResult("musicRepo");
-
-        AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
-        albumList.setAdapter(adapter);
-        albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
+        checkStatueAndRefresh();
 
 
         // When changing buttons, invoke this
@@ -162,124 +207,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 pageToken = null;
-                audioFiles =  new ArrayList<>();
-                filteredAudioFiles = new ArrayList<>();
-                switch (checkedId){
-                    case R.id.musicBtn:
-                        musicQuery.addValueEventListener(new ValueEventListener() {
-
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                                    recommendedMusic.add(postSnapshot.getKey());
-                                }
-
-
-                                storageRef.child("musicRepo").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                                            @Override
-                                            public void onSuccess(ListResult listResult) {
-                                                recAudioFiles = new ArrayList<>();
-                                                for (StorageReference item : listResult.getItems()) {
-                                                    // All the items under listRef.
-                                                    for (String rec : recommendedMusic) {
-                                                        if (rec.equals(item.getName().replace(".mp3", "")))
-                                                            recAudioFiles.add(new AudioFile(item.getName()));
-                                                    }
-                                                }
-                                                // Delete redundant data due to repeated name
-                                                List<AudioFile> distinctAudioFiles = null;
-                                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                                    distinctAudioFiles = recAudioFiles.stream().collect(
-                                                            collectingAndThen(toCollection(() ->
-                                                                    new TreeSet<>(comparing(AudioFile::getName))), ArrayList::new));
-                                                }
-
-                                                AudioFileAdapter adapter = new AudioFileAdapter(distinctAudioFiles, getActivity());
-                                                albumRecList.setAdapter(adapter);
-                                                albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                // Uh-oh, an error occurred!
-                                                Log.e("Exception", "Exception:"+e);
-                                            }
-                                        });
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {}
-                        });
-
-                        AudioFileAdapter adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
-                        albumList.setAdapter(adapter);
-                        albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
-                        getAudioFile("musicRepo", limit);
-                        ScrollListener("musicRepo");
-                        getSearchResult("musicRepo");
-
-                        break;
-                    case R.id.audiobookBtn:
-                        audioBooksQuery.addValueEventListener(new ValueEventListener() {
-
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                                    recommendedAudioBooks.add(postSnapshot.getKey());
-                                }
-
-
-
-                                storageRef.child("audioBooks").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                                            @Override
-                                            public void onSuccess(ListResult listResult) {
-                                                recAudioBooks=new ArrayList<>();
-                                                for (StorageReference item : listResult.getItems()) {
-                                                    // All the items under listRef.
-                                                    for (String rec:recommendedAudioBooks){
-                                                        if (rec.equals(item.getName().replace(".mp3","")))
-                                                            recAudioBooks.add(new AudioFile(item.getName()));
-                                                    }
-                                                }
-                                                // Delete redundant data due to repeated name
-                                                List<AudioFile> distinctAudioFiles = null;
-                                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                                    distinctAudioFiles = recAudioBooks.stream().collect(
-                                                            collectingAndThen(toCollection(() ->
-                                                                    new TreeSet<>(comparing(AudioFile::getName))), ArrayList::new));
-                                                }
-
-                                                AudioFileAdapter adapter = new AudioFileAdapter(distinctAudioFiles,getActivity());
-                                                albumRecList.setAdapter(adapter);
-                                                albumRecList.setLayoutManager(new LinearLayoutManager(currentActivity));
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                // Uh-oh, an error occurred!
-                                            }
-                                        });
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {}
-                        });
-
-                        AudioFileAdapter audiobook_adapter = new AudioFileAdapter(filteredAudioFiles,getActivity());
-                        albumList.setAdapter(audiobook_adapter);
-                        albumList.setLayoutManager(new LinearLayoutManager(currentActivity));
-                        getAudioFile("audioBooks", limit);
-                        ScrollListener("audioBooks");
-                        getSearchResult("audioBooks");
-
-                        break;
-                    default:
-                        break;
-                }
+                audioFiles.clear();
+                filteredAudioFiles.clear();
+                checkStatueAndRefresh();
             }
         });
 

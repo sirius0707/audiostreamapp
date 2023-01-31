@@ -1,8 +1,5 @@
 package com.example.audiostreamapp;
 
-import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
-import static com.example.audiostreamapp.data.model.currentMediaPlayer.isFromList;
-import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
 import android.app.Activity;
 import android.app.NotificationChannel;
@@ -208,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 if(currentMediaPlayer.isFromList() && pos!=0) {
                     pos=pos-1;
                     mediaPlayer.reset();
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
                     seekBar.setMax(mediaPlayer.getDuration());
                 }else{
                     mediaPlayer.seekTo(0);
@@ -224,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 if(currentMediaPlayer.isFromList() && pos!=favList.size()) {
                     pos=pos+1;
                     mediaPlayer.reset();
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
 
                     seekBar.setMax(mediaPlayer.getDuration());
                 }else{
@@ -260,12 +257,12 @@ public class MainActivity extends AppCompatActivity {
                 int pos=getAudioPos(currentMediaPlayer.getMediaName(),favList);
                 if(currentMediaPlayer.isFromList() && pos!=favList.size()-1){
                     pos=pos+1;
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
                     currentMediaPlayer.fromList=true;
 
                 }else if(!currentMediaPlayer.isFromList() && !favList.isEmpty()){
                     pos=0;
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
 
                     currentMediaPlayer.fromList=true;
                 }
