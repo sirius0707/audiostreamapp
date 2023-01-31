@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
     public static ArrayList<AudioFile> Search;
 
     public static RadioGroup contentMode;
-    int limit = 5;
+    int limit = 7;
     String pageToken = null;
 
     NestedScrollView nestedScrollView;
