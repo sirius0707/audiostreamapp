@@ -1,5 +1,6 @@
 package com.example.audiostreamapp.ui.home;
 
+
 import static com.example.audiostreamapp.MainActivity.favList;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -69,13 +71,23 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
     @SuppressLint("ResourceType")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (position ==0){
+            holder.container.setBackgroundResource(R.drawable.round_color_top);
+        }
+
+        if(position == mContacts.size()-1 ){
+            holder.container.setBackgroundResource(R.drawable.round_corner_bottom);
+            holder.divider.setVisibility(View.GONE);
+        }
+
         // Get the data model based on position
         AudioFile audioFile = mContacts.get(position);
 
         TextView textView = holder.nameTextView;
-        textView.setText(audioFile.getName());
+        textView.setText(audioFile.getName().replace(".mp3",""));
         ImageButton imageView = holder.imageButton;
         imageView.getContext();
+
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,9 +109,9 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
                 mDatabase.updateChildren(updates);
                 StorageReference storageRef = null;
                 if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/" + textView.getText());
+                    storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/" + textView.getText() + ".mp3");
                 } else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("audioBooks/" + textView.getText());
+                    storageRef = FirebaseStorage.getInstance().getReference().child("audioBooks/" + textView.getText() + ".mp3");
                 } else {
                     Log.e("Storage error", "Specified storage is not found");
                 }
@@ -156,6 +168,8 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
         public TextView nameTextView;
         public ImageButton imageButton;
         public Button messageButton;
+        RelativeLayout container;
+        View divider;
 
 
         // We also create a constructor that accepts the entire item row
@@ -165,12 +179,15 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
             // to access the context from any ViewHolder instance.
             super(itemView);
 
+            container = itemView.findViewById(R.id.container);
+            divider = itemView.findViewById(R.id.divider);
+
             nameTextView = (TextView) itemView.findViewById(R.id.audio_name);
             imageButton = (ImageButton) itemView.findViewById(R.id.imageButton);
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String SongName = nameTextView.getText().toString();
+                    String SongName = nameTextView.getText().toString()+ ".mp3";
                     for (AudioFile af : audioFiles) {
                         boolean matcher = SongName.equals(af.getName());
                         if (matcher) {
