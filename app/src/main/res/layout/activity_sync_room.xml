@@ -64,7 +64,7 @@
             android:id="@+id/bt_rew"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_fast_rewind" />
+            android:src="@drawable/ic_fast_rewind_action" />
 
         <ImageView
             android:id="@+id/bt_play"
@@ -83,7 +83,7 @@
             android:id="@+id/bt_ff"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_fast_forward" />
+            android:src="@drawable/ic_fast_forward_action" />
 
     </LinearLayout>
 

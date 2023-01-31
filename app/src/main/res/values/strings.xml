@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AudioStreamApp</string>
+    <string name="app_name">Audio Freak</string>
     <string name="title_home">HomePage</string>
     <string name="title_dashboard">Friends</string>
     <string name="title_notifications">Profile</string>

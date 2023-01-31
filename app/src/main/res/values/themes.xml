@@ -26,4 +26,13 @@
     <style name="Button.White" parent="ThemeOverlay.AppCompat">
         <item name="colorAccent">@android:color/white</item>
     </style>
+    <style name="LoginTheme" parent="FirebaseUI">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/purple_200</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:colorBackground">@color/white</item>
+
+        <!-- On API 21+ you can use android:statusBarColor -->
+        <item name="colorPrimaryDark">@color/black</item>
+    </style>
 </resources>

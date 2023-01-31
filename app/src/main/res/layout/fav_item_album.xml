@@ -21,9 +21,9 @@
         android:layout_marginStart="38dp"
         android:layout_marginBottom="6dp"
         android:layout_weight="1"
-        android:textColor="@color/white"
         android:contentDescription="@string/audio_name"
         android:gravity="center_vertical"
+        android:textColor="@color/white"
         android:textSize="20sp" />
 
     <ImageButton

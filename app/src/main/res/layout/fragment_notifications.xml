@@ -10,69 +10,68 @@
         android:id="@+id/Image_Avatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_marginBottom="300dp" />
+ />
 
     <Button
         android:id="@+id/Button_To_Admin_Mode"
         android:layout_width="150sp"
         android:layout_height="50sp"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="195dp"
-        android:layout_marginEnd="160dp"
+        android:layout_marginTop="30dp"
+
+        android:background="@drawable/btn_nor_down"
         android:text="ADMIN MODE"
         android:textSize="10sp"
-        android:background="@drawable/rounded_corner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/Image_Avatar"
+
+
+        />
 
     <Button
         android:id="@+id/Button_To_Modify_Profile"
         android:layout_width="150sp"
         android:layout_height="50sp"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="250dp"
-        android:layout_marginEnd="160dp"
+        android:layout_marginTop="10dp"
+
+        android:background="@drawable/btn_nor_down"
         android:text="MODIFY PROFILE"
-        android:background="@drawable/rounded_corner"
         android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/Button_To_Admin_Mode" />
 
     <Button
         android:id="@+id/Button_Upload_File"
         android:layout_width="150sp"
         android:layout_height="50sp"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="162dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@drawable/rounded_corner"
+
+        android:layout_marginTop="10dp"
+        android:background="@drawable/btn_nor_down"
         android:text="Upload"
         android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+
         app:layout_constraintTop_toBottomOf="@+id/Button_To_Modify_Profile" />
 
     <Button
         android:id="@+id/Button_To_Reset_PWD"
         android:layout_width="150sp"
         android:layout_height="50sp"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="160dp"
-        android:background="@drawable/rounded_corner"
+
+        android:layout_marginTop="10dp"
+
+        android:background="@drawable/btn_nor_down"
         android:text="Reset Password"
         android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+
         app:layout_constraintTop_toBottomOf="@+id/Button_Upload_File"
         tools:textSize="10sp" />
 
@@ -80,16 +79,16 @@
         android:id="@+id/Button_Sign_Out"
         android:layout_width="150sp"
         android:layout_height="50sp"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="160dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@drawable/rounded_corner"
+
+        android:layout_marginTop="10dp"
+
+
+        android:background="@drawable/btn_nor_down"
         android:text="Sign Out"
         android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+
         app:layout_constraintTop_toBottomOf="@+id/Button_To_Reset_PWD" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

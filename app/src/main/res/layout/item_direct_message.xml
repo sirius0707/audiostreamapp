@@ -49,6 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/msg_left"
+            android:backgroundTint="#01B302"
             android:orientation="vertical">
 
             <TextView
