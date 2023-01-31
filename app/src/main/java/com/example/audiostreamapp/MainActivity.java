@@ -135,13 +135,7 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer = currentMediaPlayer.getMediaPlayer();
         resetDurationOfAudioPlayer();
         //Get duration
-        int duration = mediaPlayer.getDuration();
-        //Convert millisecond to minute and second
-        String sDuration = convertFormat(duration);
-        Log.e("Duration",sDuration);
-        //Set duration on text view
-        playerDuration.setText(sDuration);
-        playerPosition.setText(convertFormat(mediaPlayer.getCurrentPosition()));
+
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -308,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                     createNotificationChannel();
                     Intent intent = new Intent(currentActivity, DisplayProfileActivity.class);
                     intent.putExtra("USERID", ds.child("Sender").getValue().toString());
-                    PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(currentActivity, CHANNEL_ID)
                             .setSmallIcon(R.mipmap.ic_launcher)
@@ -350,6 +344,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void resetDurationOfAudioPlayer(){
+        int duration = mediaPlayer.getDuration();
+        //Convert millisecond to minute and second
+        String sDuration = convertFormat(duration);
         seekBar.setMax(mediaPlayer.getDuration());
         if (mediaPlayer.isPlaying())
         {
@@ -359,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(runnable,0);
         }
         seekBar.setMax(mediaPlayer.getDuration());
+        playerDuration.setText(sDuration);
+        playerPosition.setText(convertFormat(mediaPlayer.getCurrentPosition()));
 
     }
 
@@ -369,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Show message
-    private void showSnackbar(String errorMessageRes) {
+    public void showSnackbar(String errorMessageRes) {
         Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
 
