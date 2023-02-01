@@ -1,23 +1,14 @@
 package com.example.audiostreamapp;
 
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,12 +17,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.liveComment.LiveComment;
@@ -69,6 +54,9 @@ public class LiveRoomActivity extends AppCompatActivity {
     Button syncButton;
     private DatabaseReference mDatabase;
     boolean onButtom=true;
+    double score;
+    double playedTimesWeight;
+//    HashBasedTable<Object, Object, Object> table = HashBasedTable.create();
 
     private static final String TAG = "LiveRoomActivity";
 
@@ -145,14 +133,129 @@ public class LiveRoomActivity extends AppCompatActivity {
                     updates.put("music/" + currentMediaPlayer.
                             getMediaName().
                             replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+
+                    // Calculate score
+                    // score = 0.7 * this_user_liked_count + 0.3 * alluser_played_counts
+                    mDatabase.child("/music").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            // Get played times and liked counts
+                            for (DataSnapshot ds:snapshot.getChildren()){
+                                // Retrieve clicked song name
+                                Log.i("ds.getKey()=",ds.getKey());
+                                Log.i("ds.getValue()=", String.valueOf(ds.getValue()));
+                                if(ds.getKey().equals(currentMediaPlayer.getMediaName().replace(".mp3", ""))){
+
+                                    for(DataSnapshot d:ds.getChildren()){
+                                        // Retrieve liked times
+                                        if(d.getKey().equals("likedTimes") || d.getKey().equals("playedTimes")) {
+                                            Log.i("d = ", String.valueOf(d));
+                                            if(d.getKey().equals("playedTimes"))
+                                                // Retrieve played times of a song
+                                                playedTimesWeight = Double.parseDouble(d.getValue().toString());
+                                            for (DataSnapshot s : d.getChildren()) {
+                                                // Retrieve data via uid
+                                                if(s.getKey().equals(uid)) {
+                                                    Log.i("s = " , String.valueOf(s));
+                                                    for (DataSnapshot un_lt : s.getChildren()) {
+                                                        Log.i("un_lt = " , String.valueOf(un_lt));
+                                                        Log.i("After uid d = ", String.valueOf(d));
+                                                        if(un_lt.getKey().equals("likedTimes")){
+                                                            score = 0.95* Double.parseDouble(un_lt.getValue().toString()) + 0.05 * playedTimesWeight;
+                                                            Log.i("score = " , String.valueOf(score));
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+                                // Store score via uid
+                                mDatabase.child("music/"+ currentMediaPlayer.getMediaName().replace(".mp3", "") + "/likedTimes/"+uid+"/score/")
+                                        .setValue(score).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                            };
+                                        });
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(LiveRoomActivity.this, "Fail to get data.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
                 }else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
                     updates.put("audiobooks/" + currentMediaPlayer.
                             getMediaName().
                             replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
                     mDatabase.updateChildren(updates);
+
+                    // Calculate score
+                    // score = 0.7 * this_user_liked_count + 0.3 * alluser_played_counts
+                    mDatabase.child("/audiobooks").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            // Get played times and liked counts
+                            for (DataSnapshot ds:snapshot.getChildren()){
+                                // Retrieve clicked song name
+                                Log.i("ds.getKey()=",ds.getKey());
+                                Log.i("ds.getValue()=", String.valueOf(ds.getValue()));
+                                if(ds.getKey().equals(currentMediaPlayer.getMediaName().replace(".mp3", ""))){
+
+                                    for(DataSnapshot d:ds.getChildren()){
+                                        // Retrieve liked times
+                                        if(d.getKey().equals("likedTimes") || d.getKey().equals("playedTimes")) {
+                                            Log.i("d = ", String.valueOf(d));
+                                            if(d.getKey().equals("playedTimes"))
+                                                // Retrieve played times of a song
+                                                playedTimesWeight = Double.parseDouble(d.getValue().toString());
+                                            for (DataSnapshot s : d.getChildren()) {
+                                                // Retrieve data via uid
+                                                if(s.getKey().equals(uid)) {
+                                                    Log.i("s = " , String.valueOf(s));
+                                                    for (DataSnapshot un_lt : s.getChildren()) {
+                                                        Log.i("un_lt = " , String.valueOf(un_lt));
+                                                        Log.i("After uid d = ", String.valueOf(d));
+                                                        if(un_lt.getKey().equals("likedTimes")){
+                                                            score = 0.95* Double.parseDouble(un_lt.getValue().toString()) + 0.05 * playedTimesWeight;
+                                                            Log.i("score = " , String.valueOf(score));
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+                                // Store score via uid
+                                mDatabase.child("audiobooks/"+ currentMediaPlayer.getMediaName().replace(".mp3", "") + "/likedTimes/"+uid+"/score/")
+                                        .setValue(score).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                            };
+                                        });
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(LiveRoomActivity.this, "Fail to get data.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }else {
                     Log.e("Storage error","Specified storage is not found");
                 }
+
+
+
 
                 //Hide play button and show pause button
                 btPlay.setVisibility(View.GONE);

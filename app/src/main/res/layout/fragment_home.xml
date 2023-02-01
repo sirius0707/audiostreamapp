@@ -121,7 +121,6 @@
                 android:id="@+id/album_list"
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_album"/>
-
             <ProgressBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

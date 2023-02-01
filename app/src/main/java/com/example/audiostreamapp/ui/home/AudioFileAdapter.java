@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,8 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.audiostreamapp.MainActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
+import com.example.audiostreamapp.superlike.GoodView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -44,11 +48,19 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
     private Activity mContext;
     private DatabaseReference mDatabase;
 
+    GoodView mGoodView;
+
     // Pass in the contact array into the constructor
     public AudioFileAdapter(List<AudioFile> contacts, Activity context) {
         mContacts = contacts;
         this.mContext = context;
 
+    }
+
+    public void good(View view) {
+        ((ImageView) view).setImageResource(R.mipmap.good_checked);
+        mGoodView.setText("+1");
+        mGoodView.show(view);
     }
 
     @NonNull
@@ -63,6 +75,9 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(contactView);
+
+        // Initialize
+        mGoodView = new GoodView(this.mContext);
         return viewHolder;
     }
 
@@ -156,6 +171,11 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
         public TextView nameTextView;
         public ImageButton imageButton;
         public Button messageButton;
+        ImageView superlike;
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        String userName = user.getDisplayName();
 
 
         // We also create a constructor that accepts the entire item row
@@ -167,6 +187,42 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
 
             nameTextView = (TextView) itemView.findViewById(R.id.audio_name);
             imageButton = (ImageButton) itemView.findViewById(R.id.imageButton);
+            superlike = (ImageView) itemView.findViewById(R.id.superlike);
+            superlike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
+                        good(superlike);
+                        Map<String, Object> liveCommitAttribute = new HashMap<>();
+                        liveCommitAttribute.put("likedTimes", ServerValue.increment(1));
+                        liveCommitAttribute.put("userName", userName);
+                        // Store liked times via uid
+                        mDatabase.child("music/" + nameTextView.getText().toString().replace(".mp3", "") + "/likedTimes/" + uid)
+                                .setValue(liveCommitAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                    }
+
+                                    ;
+                                });
+                    }else if(HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn){
+                        good(superlike);
+                        Map<String, Object> liveCommitAttribute = new HashMap<>();
+                        liveCommitAttribute.put("likedTimes", ServerValue.increment(1));
+                        liveCommitAttribute.put("userName", userName);
+                        // Store liked times via uid
+                        mDatabase.child("audiobooks/" + nameTextView.getText().toString().replace(".mp3", "") + "/likedTimes/" + uid)
+                                .setValue(liveCommitAttribute).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                    }
+
+                                    ;
+                                });
+                    }
+
+                }
+            });
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

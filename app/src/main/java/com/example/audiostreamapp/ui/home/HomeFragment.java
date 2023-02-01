@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -25,9 +26,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.databinding.FragmentHomeBinding;
+import com.example.audiostreamapp.superlike.GoodView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +43,8 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -72,6 +78,7 @@ public class HomeFragment extends Fragment {
     Activity currentActivity=this.getActivity();
 
 
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -87,10 +94,13 @@ public class HomeFragment extends Fragment {
         albumList = getView().findViewById(R.id.album_list);
         RecyclerView albumRecList = getView().findViewById(R.id.album_recommend_list);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+
 
         //init audiofile list from Firebase Storage
-        Query musicQuery = mDatabase.child("music/").orderByChild("playedTimes").limitToLast(5);
-        Query audioBooksQuery = mDatabase.child("audiobooks/").orderByChild("playedTimes").limitToLast(5);
+        Query musicQuery = mDatabase.child("music/").orderByChild("likedTimes/"+uid+"/score").limitToLast(5);
+        Query audioBooksQuery = mDatabase.child("audiobooks/").orderByChild("likedTimes/"+uid+"/score").limitToLast(5);
 
         pageToken = null;
         audioFiles = new ArrayList<>();
