@@ -162,13 +162,11 @@ public class HomeFragment extends Fragment {
                 break;
             case R.id.audiobookBtn:
                 changeType(audioBooksQuery,BiRecommendQuery,"audioBooks");
-
                 break;
             default:
                 break;
         }
     }
-
 
 
     @Override
@@ -188,8 +186,6 @@ public class HomeFragment extends Fragment {
 
 
         //init audiofile list from Firebase Storage
-
-
 
         pageToken = null;
         audioFiles = new ArrayList<>();

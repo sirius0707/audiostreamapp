@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.DisplayProfileActivity;
 import com.example.audiostreamapp.R;
+import com.example.audiostreamapp.syncFunction.SyncRoomActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -83,7 +84,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
         // Set item views based on your views and data model
         holder.username.setText(user.getUsername());
-        holder.latestmessage.setText(user.getLatest_message());
+        if (user.getLatest_message().contains("$%Welcomes you to Sync Room%$:"))
+            holder.latestmessage.setText("[Sync Room Button]");
+        else
+            holder.latestmessage.setText(user.getLatest_message());
         //holder.latestmessage.setTextColor(Color.RED);//Set unread message red
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
