@@ -147,11 +147,6 @@
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_album"/>
 
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/progress_bar"/>
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

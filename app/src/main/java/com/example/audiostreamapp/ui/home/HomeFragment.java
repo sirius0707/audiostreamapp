@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment {
     public static ArrayList<AudioFile> Search;
 
     public static RadioGroup contentMode;
-    int limit = 7;
+    int limit = 8;
     String pageToken = null;
 
     NestedScrollView nestedScrollView;
@@ -85,7 +85,6 @@ public class HomeFragment extends Fragment {
         frag.setArguments(args);
         return frag;
     }
-
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -195,7 +194,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
         //init audiofile list from Firebase Storage
 
         pageToken = null;
@@ -207,7 +205,6 @@ public class HomeFragment extends Fragment {
         Search = new ArrayList<>();
 
         checkStatueAndRefresh();
-
 
         // When changing buttons, invoke this
         contentMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
