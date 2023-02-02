@@ -2,6 +2,7 @@ package com.example.audiostreamapp.ui.home;
 
 
 import static com.example.audiostreamapp.MainActivity.favList;
+import static com.example.audiostreamapp.MainActivity.play_name;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
 import android.annotation.SuppressLint;
@@ -87,6 +88,7 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
         textView.setText(audioFile.getName().replace(".mp3",""));
         ImageButton imageView = holder.imageButton;
         imageView.getContext();
+        //
 
 
         textView.setOnClickListener(new View.OnClickListener() {
@@ -112,9 +114,8 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
                 } else {
                     Log.e("Storage error", "Specified storage is not found");
                 }
-
                 currentMediaPlayer.changeMedia(type,textView.getText()+ ".mp3");
-
+                play_name.setText(holder.nameTextView.getText());
             }
         });
 

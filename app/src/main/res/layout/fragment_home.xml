@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/RecommendTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,34 +38,45 @@
     </RadioGroup>
 
 
-    <ImageView
-        android:id="@+id/search"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="8dp"
+    <FrameLayout
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/searcg_border"
         app:layout_constraintStart_toEndOf="@id/contentModeBtn"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/search" />
-
-
-    <EditText
-        android:id="@+id/textSearch"
-        android:layout_width="190dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/searcg_border"
-        android:ems="15"
-        android:hint="Type your Search Here"
-        android:inputType="textPersonName"
-        android:text=""
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/search"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
+
+        <ImageView
+            android:id="@+id/search"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/search" />
+
+        <EditText
+            android:id="@+id/textSearch"
+            android:layout_width="170dp"
+            android:layout_marginLeft="30dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:hint="@string/edittext_hint"
+            android:inputType="textPersonName"
+            android:text=""
+            android:ems="10"
+            android:textColor="#CCFFFFFF"
+            android:textColorHint="@color/white"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/search"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/RecommendTextView"

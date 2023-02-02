@@ -1,6 +1,7 @@
 package com.example.audiostreamapp;
 
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -55,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,11 +66,12 @@ public class MainActivity extends AppCompatActivity {
 
     TextView playerPosition,playerDuration;
     SeekBar seekBar;
-    ImageView btRew,btPlay,btPause,btFf,btPre,btNext;
-
+    ImageView btRew,btPlay,btPause,btFf,btPre,btNext,iv;
+    ObjectAnimator mAnimator;
     MediaPlayer mediaPlayer;
     Handler handler = new Handler();
     Runnable runnable;
+    public static TextView play_name;
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
@@ -104,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
         currentMediaPlayer.setMainActivity(this);
 
+
+
     }
 
     @Override
@@ -118,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
         btFf = findViewById(R.id.bt_ff);
         btPre = findViewById(R.id.bt_pre);
         btNext = findViewById(R.id.bt_next);
+        iv = findViewById(R.id.iv);
+        play_name= findViewById(R.id.play_name);
+
+
+        initAnimator();
 
         runnable = new Runnable() {
             @Override
@@ -131,7 +143,11 @@ public class MainActivity extends AppCompatActivity {
         //Get init Status of Media Player
         mediaPlayer = currentMediaPlayer.getMediaPlayer();
         resetDurationOfAudioPlayer();
+        presentCurrentName();
+
         //Get duration
+
+
 
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
                 //Start media player
+                mAnimator.resume();
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
                 handler.postDelayed(runnable,0);
@@ -166,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 btPause.setVisibility(View.GONE);
                 btPlay.setVisibility(View.VISIBLE);
+                mAnimator.pause();
                 mediaPlayer.pause();
                 handler.removeCallbacks(runnable);
             }
@@ -206,7 +224,9 @@ public class MainActivity extends AppCompatActivity {
                     pos=pos-1;
                     mediaPlayer.reset();
                     currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     seekBar.setMax(mediaPlayer.getDuration());
+                    play_name.setText(favList.get(pos).getName().replace(".mp3",""));
                 }else{
                     mediaPlayer.seekTo(0);
                 }
@@ -222,8 +242,9 @@ public class MainActivity extends AppCompatActivity {
                     pos=pos+1;
                     mediaPlayer.reset();
                     currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
-
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     seekBar.setMax(mediaPlayer.getDuration());
+                    play_name.setText(favList.get(pos).getName().replace(".mp3",""));
                 }else{
                     mediaPlayer.stop();
                 }
@@ -258,12 +279,12 @@ public class MainActivity extends AppCompatActivity {
                 if(currentMediaPlayer.isFromList() && pos!=favList.size()-1){
                     pos=pos+1;
                     currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     currentMediaPlayer.fromList=true;
-
                 }else if(!currentMediaPlayer.isFromList() && !favList.isEmpty()){
                     pos=0;
                     currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
-
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     currentMediaPlayer.fromList=true;
                 }
                 //else if(currentMediaPlayer.isFromList() && currentMediaPlayer.listPosition) {}
@@ -274,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         });
+
 
 
         LinearLayout audioPlayerLayout = (LinearLayout )findViewById(R.id.audioPlayerLayout);
@@ -333,6 +355,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+//
+    private void presentCurrentName() {
+        if (mediaPlayer.isPlaying()) {
+            play_name.setText(currentMediaPlayer.getMediaName().replace(".mp3", ""));
+        }
+    }
+
+    private void initAnimator() {
+        mAnimator = ObjectAnimator.ofFloat(iv,"rotation",0.0f,360.0f);
+        mAnimator.setDuration(3000);//设定转一圈的时间
+        mAnimator.setRepeatCount(Animation.INFINITE);//设定无限循环
+        mAnimator.setRepeatMode(ObjectAnimator.RESTART);//循环模式
+        mAnimator.setInterpolator(new LinearInterpolator());//匀速
+        mAnimator.start();
+        mAnimator.pause();
     }
 
     public void startLiveRoomActivity(){
