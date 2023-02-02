@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class currentMediaPlayer {
     private static MediaPlayer mediaPlayerOnPlay;
     private static String mediaName;
+    private static String currentRepoName;
     private static MainActivity mainActivity;
     //public static int listPosition=0;
     public static boolean fromList=false;
@@ -35,6 +36,7 @@ public class currentMediaPlayer {
     public static void create(Activity activity, int i){
         mediaPlayerOnPlay=MediaPlayer.create(activity,i);
         mediaName="Welcome.mp3";
+        currentRepoName="musicRepo";
     }
 
     public static void setMainActivity(MainActivity mainActivitys){
@@ -65,7 +67,9 @@ public class currentMediaPlayer {
 
     }
 
-
+    public static String getRepoName() {
+        return currentRepoName;
+    }
     public static String getMediaName() {
         return mediaName;
     }
@@ -86,6 +90,7 @@ public class currentMediaPlayer {
 
                         DatabaseReference mDatabase  = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference().child("recommend/"+ lastSong);
                         currentMediaPlayer.setMediaPlayerURL(url,(String) newSongName);
+                        currentRepoName=repoName;
                         Map<String, Object> updates = new HashMap<>();
                         updates.put(getMediaName().
                                         replace(".mp3", ""),
