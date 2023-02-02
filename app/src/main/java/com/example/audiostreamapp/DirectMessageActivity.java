@@ -200,6 +200,7 @@ public class DirectMessageActivity extends AppCompatActivity {
                     else if (user_status.equals("Blocked"))
                         showSnackbar("You are blocked by this user!");
                     else {
+
                         Intent intent = new Intent(currentActivity, SyncRoomActivity.class);
                         intent.putExtra("Role","Host");
                         intent.putExtra("VisiorID", receiverID);

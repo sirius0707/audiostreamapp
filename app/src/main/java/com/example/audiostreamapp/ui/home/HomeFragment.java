@@ -6,7 +6,9 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.databinding.FragmentHomeBinding;
+import com.example.audiostreamapp.ui.home.notifications.UploadDialogFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -75,6 +78,14 @@ public class HomeFragment extends Fragment {
 
     Activity currentActivity=this.getActivity();
 
+    public static HomeFragment newInstance() {
+        HomeFragment frag = new HomeFragment();
+        Bundle args = new Bundle();
+        //args.putParcelable("uri",file);
+        frag.setArguments(args);
+        return frag;
+    }
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -82,7 +93,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void changeType(Query newTypeQuery,Query BiRecommendQuery,String repoName){
-        Log.e("hier",newTypeQuery.toString());
+        Log.e("here",newTypeQuery.toString());
         BiRecommendQuery.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -101,7 +112,7 @@ public class HomeFragment extends Fragment {
                                 Log.e("firebase", "Error getting data", task.getException());
                             }
                             else {
-                                Log.e("hier",task.getResult().getKey());
+                                Log.e("here",task.getResult().getKey());
                                 for (DataSnapshot postSnapshot: task.getResult().getChildren()) {
                                     recommendedMusic.add(postSnapshot.getKey());
                                 }
@@ -305,7 +316,7 @@ public class HomeFragment extends Fragment {
 
     // Show message
     private void showSnackbar(String errorMessageRes) {
-        Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
 
     @Override

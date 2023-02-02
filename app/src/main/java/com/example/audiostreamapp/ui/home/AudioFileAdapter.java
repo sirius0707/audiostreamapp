@@ -8,9 +8,7 @@ import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,19 +24,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.audiostreamapp.MainActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.storage.FirebaseStorage;
+
 import com.google.firebase.storage.StorageReference;
-//import com.google.gson.Gson;
+
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.ViewHolder> {
 

@@ -1,7 +1,10 @@
 package com.example.audiostreamapp.syncFunction;
 
 import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
+import static com.example.audiostreamapp.data.model.currentMediaPlayer.getRepoName;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +23,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.audiostreamapp.LiveRoomActivity;
 import com.example.audiostreamapp.R;
+import com.example.audiostreamapp.SyncRoomAudioChooseActivity;
 import com.example.audiostreamapp.data.model.ActionWithFirebase;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
 import com.example.audiostreamapp.liveComment.LiveComment;
@@ -57,6 +62,8 @@ public class SyncRoomActivity extends AppCompatActivity {
     String role;
     String newSyncRoomKey;
     ValueEventListener valueListner;
+    ImageView phonogramLogo;
+    private Activity currentActivity;
 
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
 
@@ -64,6 +71,7 @@ public class SyncRoomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync_room);
+        currentActivity = this;
 
         role = getIntent().getStringExtra("Role");
 
@@ -76,6 +84,7 @@ public class SyncRoomActivity extends AppCompatActivity {
         btFf = findViewById(R.id.bt_ff);
         btSendMs = findViewById(R.id.send_livechat_button);
         liveComment = findViewById(R.id.input_livechat_box);
+        phonogramLogo = findViewById(R.id.phonogram_logo);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid=user.getUid();
         String userName = user.getDisplayName();
@@ -199,6 +208,8 @@ public class SyncRoomActivity extends AppCompatActivity {
         if (role.equals("Host")){
             //create new syncRome with State
             newSyncRoomKey=mDatabase.child("syncRoom/").push().getKey();
+            ActionWithFirebase.sendMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),getIntent().getStringExtra("VisiorID"),
+                    "$%Welcomes you to Sync Room%$:"+newSyncRoomKey,new EditText(this));
 
         }
         else{
@@ -231,6 +242,15 @@ public class SyncRoomActivity extends AppCompatActivity {
                         };
                     });
                 }
+            }
+        });
+
+        //enter audio choose activity
+        phonogramLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent audioChoose_intent = new Intent(currentActivity, SyncRoomAudioChooseActivity.class);
+                startActivity(audioChoose_intent);
             }
         });
 
@@ -298,12 +318,13 @@ public class SyncRoomActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (role.equals("Host")){
+        //if (role.equals("Host")){
             //create new syncRome with State
             setCurrentStatus();
-            ActionWithFirebase.sendMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),getIntent().getStringExtra("VisiorID"),
-                    "$%Welcomes you to Sync Room%$:"+newSyncRoomKey,new EditText(this));
-        }
+
+        //}
+
+        resetDurationOfAudioPlayer();
 
         Map<String, Object> updates = new HashMap<>();
 
@@ -337,7 +358,8 @@ public class SyncRoomActivity extends AppCompatActivity {
 
 
                     String newSongName=snapshot.child("currentMusicName").getValue(String.class);
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/"+newSongName);
+                    String repoName=snapshot.child("repoName").getValue(String.class);
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(repoName+"/"+newSongName);
                     if (getMediaName().equals(newSongName))
                     {
                         mediaPlayer.start();
@@ -400,6 +422,8 @@ public class SyncRoomActivity extends AppCompatActivity {
                                                 handler.removeCallbacks(runnable);
                                             }
 
+                                            resetDurationOfAudioPlayer();
+
                                         }
                                     });
                                 }
@@ -424,6 +448,24 @@ public class SyncRoomActivity extends AppCompatActivity {
 
     }
 
+    public void resetDurationOfAudioPlayer(){
+        int duration = mediaPlayer.getDuration();
+        //Convert millisecond to minute and second
+        String sDuration = convertFormat(duration);
+        seekBar.setMax(mediaPlayer.getDuration());
+        if (mediaPlayer.isPlaying())
+        {
+            btPlay.setVisibility(View.GONE);
+            btPause.setVisibility(View.VISIBLE);
+            //Start media player
+            handler.postDelayed(runnable,0);
+        }
+        seekBar.setMax(mediaPlayer.getDuration());
+        playerDuration.setText(sDuration);
+        playerPosition.setText(convertFormat(mediaPlayer.getCurrentPosition()));
+
+    }
+
 
 
     private void setCurrentStatus(){
@@ -431,7 +473,7 @@ public class SyncRoomActivity extends AppCompatActivity {
         newState.put("currentMusicName",getMediaName());
         newState.put("pos",mediaPlayer.getCurrentPosition());
         newState.put("playStatus",mediaPlayer.isPlaying());
-
+        newState.put("repoName",getRepoName());
         mDatabase.child("syncRoom/"+ newSyncRoomKey+"/status").setValue(newState);
     }
 
