@@ -9,14 +9,30 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/background"
-    android:paddingTop="?attr/actionBarSize">
+>
 
-    <ImageView
-        android:id="@+id/imageView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:src="@drawable/ic_music"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/fragmentlayout"
+        android:layout_margin="1dp"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/play_box"
+            android:outlineAmbientShadowColor="@color/white"/>
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:src="@drawable/icon_record"
+            android:padding="40dp"
+
+            />
+    </FrameLayout>
+
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -24,7 +40,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/fragmentlayout">
 
         <TextView
             android:id="@+id/player_position"
@@ -64,37 +81,37 @@
             android:id="@+id/bt_rew"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_fast_rewind" />
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_fast_rewind_action" />
 
         <ImageView
             android:id="@+id/bt_play"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_play" />
 
         <ImageView
             android:id="@+id/bt_pause"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_pause"
             android:visibility="gone" />
 
         <ImageView
             android:id="@+id/bt_ff"
             android:layout_width="60dp"
+            android:layout_gravity="center_vertical"
             android:layout_height="60dp"
-            android:src="@drawable/ic_fast_forward" />
-
-
+            android:src="@drawable/ic_fast_forward_action" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="408dp"
-        android:layout_height="262dp"
-
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
         android:orientation="vertical"
-        android:paddingTop="10dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/play_buttons_layout">
@@ -102,7 +119,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/live_comment_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="273dp" />
 
 
     </LinearLayout>
@@ -111,7 +128,6 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/white"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -119,16 +135,23 @@
             android:id="@+id/input_livechat_box"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_border"
+            android:gravity="center_vertical"
+            android:hint="Type message here"
+            android:maxLines="2"
+            android:textAllCaps="false"
+            android:textColorHint="#4D000000" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/send_livechat_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_nor_down"
             android:scrollbarSize="4dp"
-            android:text="Send"
-            app:iconPadding="0dp" />
+            android:text="Send" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

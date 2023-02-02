@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -65,12 +66,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         // 设置字体大小（相对值,单位：像素） 参数表示为默认字体大小的多少倍
         message_to_show.setSpan(new RelativeSizeSpan(0.7f), 0, 20, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+        SpannableString send_sync_message_to_show = new SpannableString(message.getMessageTime() + "\n\n" + "You just sent an invitation for listening together!");
+        send_sync_message_to_show.setSpan(new RelativeSizeSpan(0.7f), 0, 20, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        SpannableString receive_sync_message_to_show = new SpannableString(message.getMessageTime() + "\n\n" + "Come to listen with me!");
+        receive_sync_message_to_show.setSpan(new RelativeSizeSpan(0.7f), 0, 20, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         if(user.getUid().equals(message.getSender())) {
             // Display the message layout on the right and hide the message layout on the left
             holder.rightLayout.setVisibility(View.VISIBLE);
-            holder.right_message.setText(message_to_show);
             if (message.getContent().contains("$%Welcomes you to Sync Room%$:")){
-                holder.right_message.setOnClickListener(new View.OnClickListener() {
+                holder.right_message.setText(send_sync_message_to_show);
+                holder.right_sync_button.setVisibility(View.VISIBLE);
+                holder.right_sync_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(currentActivity, SyncRoomActivity.class);
@@ -79,6 +87,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         currentActivity.startActivity(intent);
                     }
                 });
+            }
+            else{
+                holder.right_message.setText(message_to_show);
             }
             holder.right_message.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -105,9 +116,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         else if(user.getUid().equals(message.getReceiver())){
             // Display the message layout on the left and hide the message layout on the right
             holder.leftLayout.setVisibility(View.VISIBLE);
-            holder.left_message.setText(message_to_show);
             if (message.getContent().contains("$%Welcomes you to Sync Room%$:")){
-                holder.left_message.setOnClickListener(new View.OnClickListener() {
+                holder.left_message.setText(receive_sync_message_to_show);
+                holder.left_sync_button.setVisibility(View.VISIBLE);
+                holder.left_sync_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(currentActivity, SyncRoomActivity.class);
@@ -116,6 +128,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         currentActivity.startActivity(intent);
                     }
                 });
+            }
+            else{
+                holder.left_message.setText(message_to_show);
             }
             holder.left_message.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -151,13 +166,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder{
         LinearLayout leftLayout, rightLayout;
         TextView left_message, right_message;
+        Button left_sync_button, right_sync_button;
 
         public ViewHolder(View view){
             super(view);
             leftLayout = view.findViewById(R.id.left_layout);
             left_message = view.findViewById(R.id.left_message);
+            left_sync_button = view.findViewById(R.id.button_sync_left);
             rightLayout = view.findViewById(R.id.right_layout);
             right_message = view.findViewById(R.id.right_message);
+            right_sync_button = view.findViewById(R.id.button_sync_right);
         }
     }
 }

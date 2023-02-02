@@ -1,5 +1,6 @@
 package com.example.audiostreamapp.ui.home;
 
+
 import static com.example.audiostreamapp.MainActivity.favList;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,8 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class AudioFileAdapter extends
-        RecyclerView.Adapter<AudioFileAdapter.ViewHolder> {
+public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.ViewHolder> {
 
     // Store a member variable for the contacts
     private List<AudioFile> mContacts;
@@ -70,6 +71,15 @@ public class AudioFileAdapter extends
     @SuppressLint("ResourceType")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (position ==0){
+            holder.container.setBackgroundResource(R.drawable.round_color_top);
+        }
+
+        if(position == mContacts.size()-1 ){
+            holder.container.setBackgroundResource(R.drawable.round_corner_bottom);
+            holder.divider.setVisibility(View.GONE);
+        }
+
         // Get the data model based on position
         AudioFile audioFile = mContacts.get(position);
 
@@ -77,67 +87,34 @@ public class AudioFileAdapter extends
         textView.setText(audioFile.getName().replace(".mp3",""));
         ImageButton imageView = holder.imageButton;
         imageView.getContext();
+        //
+
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 currentMediaPlayer.fromList = false;
                 Map<String, Object> updates = new HashMap<>();
+
+                mDatabase.updateChildren(updates);
+                StorageReference storageRef = null;
+                String type="musicRepo";
                 if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
                     updates.put("music/" + currentMediaPlayer.
                             getMediaName().
                             replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    type="musicRepo";
                 } else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
+                    type="audioBooks";
                     updates.put("audiobooks/" + currentMediaPlayer.
                             getMediaName().
                             replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+
                 } else {
                     Log.e("Storage error", "Specified storage is not found");
                 }
 
-                mDatabase.updateChildren(updates);
-                StorageReference storageRef = null;
-                if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/" + textView.getText() + ".mp3");
-                } else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("audioBooks/" + textView.getText() + ".mp3");
-                } else {
-                    Log.e("Storage error", "Specified storage is not found");
-                }
-                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                // Download url of file
-                                String url = uri.toString();
-                                Log.e("URL", url);
-                                currentMediaPlayer.setMediaPlayerURL(url, (String) textView.getText());
-                                currentMediaPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-                                    @Override
-                                    public void onPrepared(MediaPlayer mp) {
-                                        mp.start();
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(10);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        ((MainActivity) mContext).resetDurationOfAudioPlayer();
-
-                                    }
-                                });
-
-
-                            }
-                        })
-
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.i("TAG", e.getMessage());
-                            }
-                        });
-                currentMediaPlayer.changeMedia((String) holder.nameTextView.getText());
-                holder.nameTextView.getText();
+                currentMediaPlayer.changeMedia(type,textView.getText()+ ".mp3");
 
             }
         });
@@ -157,6 +134,8 @@ public class AudioFileAdapter extends
         public TextView nameTextView;
         public ImageButton imageButton;
         public Button messageButton;
+        RelativeLayout container;
+        View divider;
 
 
         // We also create a constructor that accepts the entire item row
@@ -165,6 +144,9 @@ public class AudioFileAdapter extends
             // Stores the itemView in a public final member variable that can be used
             // to access the context from any ViewHolder instance.
             super(itemView);
+
+            container = itemView.findViewById(R.id.container);
+            divider = itemView.findViewById(R.id.divider);
 
             nameTextView = (TextView) itemView.findViewById(R.id.audio_name);
             imageButton = (ImageButton) itemView.findViewById(R.id.imageButton);

@@ -39,10 +39,20 @@ public class SongAdapter extends RecyclerView.Adapter<MyView> {
 
     @Override
     public void onBindViewHolder(@NonNull MyView holder, @SuppressLint("RecyclerView") int position) {
+        if (position ==0){
+            holder.fav_container.setBackgroundResource(R.drawable.round_color_top);
+        }
+
+        if(position == songs.size()-1 ){
+            holder.fav_container.setBackgroundResource(R.drawable.round_corner_bottom);
+            holder.fav_divider.setVisibility(View.GONE);
+        }
         AudioFile song = songs.get(position);
+
 
         TextView textView = holder.audio_name;
         textView.setText(song.getName());
+
 
         //点击歌曲名播放
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -50,7 +60,8 @@ public class SongAdapter extends RecyclerView.Adapter<MyView> {
             public void onClick(View view) {
                 //currentMediaPlayer.listPosition=holder.getAdapterPosition();
 
-                currentMediaPlayer.changeMedia((String) holder.audio_name.getText());
+                currentMediaPlayer.changeMedia("musicRepo",(String) holder.audio_name.getText());
+                currentMediaPlayer.changeMedia("audioBooks",(String) holder.audio_name.getText());
                 currentMediaPlayer.fromList=true;
                 holder.audio_name.getText();
             }

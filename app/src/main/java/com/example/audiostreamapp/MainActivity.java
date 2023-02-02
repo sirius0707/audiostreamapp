@@ -1,9 +1,7 @@
 package com.example.audiostreamapp;
 
-import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
-import static com.example.audiostreamapp.data.model.currentMediaPlayer.isFromList;
-import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,6 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -58,15 +58,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    TextView playerPosition,playerDuration;
+    TextView playerPosition,playerDuration,play_name;
     SeekBar seekBar;
-    ImageView btRew,btPlay,btPause,btFf,btPre,btNext;
-
+    ImageView btRew,btPlay,btPause,btFf,btPre,btNext,iv;
+    ObjectAnimator mAnimator;
     MediaPlayer mediaPlayer;
     Handler handler = new Handler();
     Runnable runnable;
@@ -121,6 +122,11 @@ public class MainActivity extends AppCompatActivity {
         btFf = findViewById(R.id.bt_ff);
         btPre = findViewById(R.id.bt_pre);
         btNext = findViewById(R.id.bt_next);
+        iv = findViewById(R.id.iv);
+        play_name= findViewById(R.id.play_name);
+
+
+        initAnimator();
 
         runnable = new Runnable() {
             @Override
@@ -134,7 +140,10 @@ public class MainActivity extends AppCompatActivity {
         //Get init Status of Media Player
         mediaPlayer = currentMediaPlayer.getMediaPlayer();
         resetDurationOfAudioPlayer();
+//        presentCurrentName();
+
         //Get duration
+
 
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
                 //Start media player
+                mAnimator.resume();
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
                 handler.postDelayed(runnable,0);
@@ -169,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 btPause.setVisibility(View.GONE);
                 btPlay.setVisibility(View.VISIBLE);
+                mAnimator.pause();
                 mediaPlayer.pause();
                 handler.removeCallbacks(runnable);
             }
@@ -208,7 +219,8 @@ public class MainActivity extends AppCompatActivity {
                 if(currentMediaPlayer.isFromList() && pos!=0) {
                     pos=pos-1;
                     mediaPlayer.reset();
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     seekBar.setMax(mediaPlayer.getDuration());
                 }else{
                     mediaPlayer.seekTo(0);
@@ -224,8 +236,8 @@ public class MainActivity extends AppCompatActivity {
                 if(currentMediaPlayer.isFromList() && pos!=favList.size()) {
                     pos=pos+1;
                     mediaPlayer.reset();
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
-
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     seekBar.setMax(mediaPlayer.getDuration());
                 }else{
                     mediaPlayer.stop();
@@ -260,13 +272,13 @@ public class MainActivity extends AppCompatActivity {
                 int pos=getAudioPos(currentMediaPlayer.getMediaName(),favList);
                 if(currentMediaPlayer.isFromList() && pos!=favList.size()-1){
                     pos=pos+1;
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     currentMediaPlayer.fromList=true;
-
                 }else if(!currentMediaPlayer.isFromList() && !favList.isEmpty()){
                     pos=0;
-                    currentMediaPlayer.changeMedia(favList.get(pos).getName());
-
+                    currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
+                    currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     currentMediaPlayer.fromList=true;
                 }
                 //else if(currentMediaPlayer.isFromList() && currentMediaPlayer.listPosition) {}
@@ -277,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         });
+
 
 
         LinearLayout audioPlayerLayout = (LinearLayout )findViewById(R.id.audioPlayerLayout);
@@ -302,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                     createNotificationChannel();
                     Intent intent = new Intent(currentActivity, DisplayProfileActivity.class);
                     intent.putExtra("USERID", ds.child("Sender").getValue().toString());
-                    PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(currentActivity, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(currentActivity, CHANNEL_ID)
                             .setSmallIcon(R.mipmap.ic_launcher)
@@ -337,6 +350,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+//
+//    private void presentCurrentName() {
+//        if(mediaPlayer.isPlaying()) {
+//            play_name.setText(currentMediaPlayer.getMediaName().replace(".mp3",""));
+//        }
+//    }
+
+    private void initAnimator() {
+        mAnimator = ObjectAnimator.ofFloat(iv,"rotation",0.0f,360.0f);
+        mAnimator.setDuration(3000);//设定转一圈的时间
+        mAnimator.setRepeatCount(Animation.INFINITE);//设定无限循环
+        mAnimator.setRepeatMode(ObjectAnimator.RESTART);//循环模式
+        mAnimator.setInterpolator(new LinearInterpolator());//匀速
+        mAnimator.start();
+        mAnimator.pause();
+    }
 
     public void startLiveRoomActivity(){
         Intent liveRoom_intent = new Intent(currentActivity,LiveRoomActivity.class);
@@ -368,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Show message
-    private void showSnackbar(String errorMessageRes) {
+    public void showSnackbar(String errorMessageRes) {
         Toast.makeText(getApplicationContext(), errorMessageRes, Toast.LENGTH_SHORT).show();
     }
 

@@ -11,46 +11,52 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="75dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_marginBottom="300dp" />
+/>
 
     <TextView
         android:id="@+id/chatter_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
+        android:layout_marginTop="15dp"
         android:textStyle="bold"
         android:text="test"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/Button_To_Direct_Message" />
+        app:layout_constraintTop_toBottomOf="@id/Image_Avatar"  />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/btn_nor_down"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="13sp"
         android:id="@+id/Button_To_Direct_Message"
         android:layout_width="150sp"
         android:layout_height="50sp"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="250dp"
-        android:layout_marginEnd="160dp"
-        android:background="@drawable/rounded_corner"
+
+        android:layout_marginTop="20dp"
+
         android:text="Direct Message"
-        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/chatter_name" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/Button_Block"
         android:layout_width="150sp"
         android:layout_height="50sp"
-        android:layout_marginStart="161dp"
+
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="160dp"
-        android:background="@drawable/rounded_corner"
+
+        android:background="@drawable/btn_nor_down"
         android:text="Block"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Button_To_Direct_Message" />
