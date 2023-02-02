@@ -80,14 +80,29 @@
             android:layout_height="40dp"
             android:orientation="horizontal">
 
-            <TextView
+            <FrameLayout
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
-                android:id="@+id/play_name"
-                android:gravity="center_vertical"
-                android:paddingLeft="5dp"
-                android:background="@drawable/btn_nor_down"
-                android:textColor="@color/white" />
+                android:id="@+id/PlayFrameLayout"
+                android:background="@drawable/btn_nor_down">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_margin="10dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_music"
+                    />
+
+
+                <TextView
+                    android:layout_width="160dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/play_name"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="right"
+                    android:textColor="@color/white" />
+
+            </FrameLayout>
 
             <ImageButton
                 android:id="@+id/bt_pre"

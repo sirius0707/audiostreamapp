@@ -64,13 +64,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    TextView playerPosition,playerDuration,play_name;
+    TextView playerPosition,playerDuration;
     SeekBar seekBar;
     ImageView btRew,btPlay,btPause,btFf,btPre,btNext,iv;
     ObjectAnimator mAnimator;
     MediaPlayer mediaPlayer;
     Handler handler = new Handler();
     Runnable runnable;
+    public static TextView play_name;
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
         currentMediaPlayer.setMainActivity(this);
 
+
+
     }
 
     @Override
@@ -140,9 +143,10 @@ public class MainActivity extends AppCompatActivity {
         //Get init Status of Media Player
         mediaPlayer = currentMediaPlayer.getMediaPlayer();
         resetDurationOfAudioPlayer();
-//        presentCurrentName();
+        presentCurrentName();
 
         //Get duration
+
 
 
         btPlay.setOnClickListener(new View.OnClickListener() {
@@ -222,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
                     currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     seekBar.setMax(mediaPlayer.getDuration());
+                    play_name.setText(favList.get(pos).getName().replace(".mp3",""));
                 }else{
                     mediaPlayer.seekTo(0);
                 }
@@ -239,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
                     currentMediaPlayer.changeMedia("audioBooks",favList.get(pos).getName());
                     seekBar.setMax(mediaPlayer.getDuration());
+                    play_name.setText(favList.get(pos).getName().replace(".mp3",""));
                 }else{
                     mediaPlayer.stop();
                 }
@@ -351,11 +357,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 //
-//    private void presentCurrentName() {
-//        if(mediaPlayer.isPlaying()) {
-//            play_name.setText(currentMediaPlayer.getMediaName().replace(".mp3",""));
-//        }
-//    }
+    private void presentCurrentName() {
+        if (mediaPlayer.isPlaying()) {
+            play_name.setText(currentMediaPlayer.getMediaName().replace(".mp3", ""));
+        }
+    }
 
     private void initAnimator() {
         mAnimator = ObjectAnimator.ofFloat(iv,"rotation",0.0f,360.0f);

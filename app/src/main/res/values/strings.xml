@@ -33,5 +33,5 @@
     <string name="upload_as_audiobook">Upload as audiobook</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="edittext_hint"><font size="15">Type your search here!</font></string>
+    <string name="edittext_hint"><font size="12">Type your search here!</font></string>
 </resources>
