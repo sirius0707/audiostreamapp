@@ -188,12 +188,12 @@ public class ModifyProfileActivity extends AppCompatActivity {
                     Dialog d = new AlertDialog.Builder(ModifyProfileActivity.this)
                             .setIcon(android.R.drawable.ic_dialog_info)
                             .setTitle("Update E-mail Confirmation")
-                            .setMessage("Are you sure you want to update E-mail address? A verification will be sent to your new E-mail address.")
+                            .setMessage("Are you sure you want to update E-mail address?")
                             .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    user.verifyBeforeUpdateEmail(new_email);
-                                    showSnackbar("An E-mail has been sent.");
+                                    updateEmail(new_email);
+                                    showSnackbar("E-mail address has been updated!");
                                 }
                             })
                             .setNegativeButton("Cancel", null)
@@ -275,7 +275,6 @@ public class ModifyProfileActivity extends AppCompatActivity {
         // [END update_profile]
     }
 
-    // Update Email (abandoned)
     public void updateEmail(String new_email) {
         // [START update_email]
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

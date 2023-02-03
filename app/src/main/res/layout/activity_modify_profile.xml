@@ -58,8 +58,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/TextInput_Email"
-        android:layout_width="294sp"
-        android:layout_height="48sp"
+        android:layout_width="294dp"
+        android:layout_height="48dp"
         android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
