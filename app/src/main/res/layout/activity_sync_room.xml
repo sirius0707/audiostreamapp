@@ -12,7 +12,7 @@
     android:paddingTop="?attr/actionBarSize">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/phonogram_logo"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:src="@drawable/ic_music"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/phonogram_logo">
 
         <TextView
             android:id="@+id/player_position"
@@ -64,7 +64,7 @@
             android:id="@+id/bt_rew"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_fast_rewind" />
+            android:src="@drawable/ic_fast_rewind_action" />
 
         <ImageView
             android:id="@+id/bt_play"
@@ -83,7 +83,7 @@
             android:id="@+id/bt_ff"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_fast_forward" />
+            android:src="@drawable/ic_fast_forward_action" />
 
     </LinearLayout>
 

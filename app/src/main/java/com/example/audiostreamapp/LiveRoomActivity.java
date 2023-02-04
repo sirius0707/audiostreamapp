@@ -12,6 +12,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,9 +63,10 @@ import java.util.concurrent.TimeUnit;
 public class LiveRoomActivity extends AppCompatActivity {
     TextView playerPosition,playerDuration;
     SeekBar seekBar;
-    ImageView btRew,btPlay,btPause,btFf;
+    ImageView btRew,btPlay,btPause,btFf,iv;
     Handler handler = new Handler();
     Runnable runnable;
+    ObjectAnimator mAnimator;
     MediaPlayer mediaPlayer;
     Button btSendMs;
     EditText liveComment;
@@ -84,6 +88,9 @@ public class LiveRoomActivity extends AppCompatActivity {
         btFf = findViewById(R.id.bt_ff);
         btSendMs = findViewById(R.id.send_livechat_button);
         liveComment = findViewById(R.id.input_livechat_box);
+        iv = findViewById(R.id.iv);
+
+        initAnimator();
 
         mDatabase = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -118,6 +125,7 @@ public class LiveRoomActivity extends AppCompatActivity {
         mediaPlayer = currentMediaPlayer.getMediaPlayer();
         if (mediaPlayer.isPlaying())
         {
+            mAnimator.start();
             btPlay.setVisibility(View.GONE);
             btPause.setVisibility(View.VISIBLE);
             //Start media player
@@ -157,6 +165,7 @@ public class LiveRoomActivity extends AppCompatActivity {
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
                 //Start media player
+                mAnimator.resume();
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
                 handler.postDelayed(runnable,0);
@@ -169,6 +178,7 @@ public class LiveRoomActivity extends AppCompatActivity {
                                        public void onClick(View view) {
                                            btPause.setVisibility(View.GONE);
                                            btPlay.setVisibility(View.VISIBLE);
+                                           mAnimator.pause();
                                            mediaPlayer.pause();
                                            handler.removeCallbacks(runnable);
                                        }
@@ -347,6 +357,16 @@ public class LiveRoomActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    private void initAnimator() {
+        mAnimator = ObjectAnimator.ofFloat(iv,"rotation",0.0f,360.0f);
+        mAnimator.setDuration(3000);//设定转一圈的时间
+        mAnimator.setRepeatCount(Animation.INFINITE);//设定无限循环
+        mAnimator.setRepeatMode(ObjectAnimator.RESTART);//循环模式
+        mAnimator.setInterpolator(new LinearInterpolator());//匀速
+        mAnimator.start();
+        mAnimator.pause();
     }
 
     //filter the bad words and substitute with *

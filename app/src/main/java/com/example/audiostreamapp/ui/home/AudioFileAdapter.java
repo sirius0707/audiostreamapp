@@ -2,14 +2,13 @@ package com.example.audiostreamapp.ui.home;
 
 
 import static com.example.audiostreamapp.MainActivity.favList;
+import static com.example.audiostreamapp.MainActivity.play_name;
 import static com.example.audiostreamapp.ui.home.HomeFragment.audioFiles;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,19 +24,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.audiostreamapp.MainActivity;
 import com.example.audiostreamapp.R;
 import com.example.audiostreamapp.data.model.currentMediaPlayer;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.storage.FirebaseStorage;
+
 import com.google.firebase.storage.StorageReference;
-//import com.google.gson.Gson;
+
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.ViewHolder> {
 
@@ -87,6 +84,7 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
         textView.setText(audioFile.getName().replace(".mp3",""));
         ImageButton imageView = holder.imageButton;
         imageView.getContext();
+        //
 
 
         textView.setOnClickListener(new View.OnClickListener() {
@@ -94,62 +92,26 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
             public void onClick(View view) {
                 currentMediaPlayer.fromList = false;
                 Map<String, Object> updates = new HashMap<>();
+
+                mDatabase.updateChildren(updates);
+                StorageReference storageRef = null;
+                String type="musicRepo";
                 if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
                     updates.put("music/" + currentMediaPlayer.
                             getMediaName().
                             replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    type="musicRepo";
                 } else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
+                    type="audioBooks";
                     updates.put("audiobooks/" + currentMediaPlayer.
                             getMediaName().
                             replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+
                 } else {
                     Log.e("Storage error", "Specified storage is not found");
                 }
-
-                mDatabase.updateChildren(updates);
-                StorageReference storageRef = null;
-                if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/" + textView.getText() + ".mp3");
-                } else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
-                    storageRef = FirebaseStorage.getInstance().getReference().child("audioBooks/" + textView.getText() + ".mp3");
-                } else {
-                    Log.e("Storage error", "Specified storage is not found");
-                }
-                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                // Download url of file
-                                String url = uri.toString();
-                                Log.e("URL", url);
-                                currentMediaPlayer.setMediaPlayerURL(url, (String) textView.getText());
-                                currentMediaPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-                                    @Override
-                                    public void onPrepared(MediaPlayer mp) {
-                                        mp.start();
-                                        try {
-                                            TimeUnit.MILLISECONDS.sleep(10);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        ((MainActivity) mContext).resetDurationOfAudioPlayer();
-
-                                    }
-                                });
-
-
-                            }
-                        })
-
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.i("TAG", e.getMessage());
-                            }
-                        });
-                currentMediaPlayer.changeMedia((String) holder.nameTextView.getText());
-                holder.nameTextView.getText();
-
+                currentMediaPlayer.changeMedia(type,textView.getText()+ ".mp3");
+                play_name.setText(holder.nameTextView.getText());
             }
         });
 

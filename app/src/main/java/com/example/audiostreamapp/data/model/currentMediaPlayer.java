@@ -11,15 +11,21 @@ import androidx.annotation.NonNull;
 import com.example.audiostreamapp.MainActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class currentMediaPlayer {
     private static MediaPlayer mediaPlayerOnPlay;
     private static String mediaName;
+    private static String currentRepoName;
     private static MainActivity mainActivity;
     //public static int listPosition=0;
     public static boolean fromList=false;
@@ -30,6 +36,7 @@ public class currentMediaPlayer {
     public static void create(Activity activity, int i){
         mediaPlayerOnPlay=MediaPlayer.create(activity,i);
         mediaName="Welcome.mp3";
+        currentRepoName="musicRepo";
     }
 
     public static void setMainActivity(MainActivity mainActivitys){
@@ -60,14 +67,19 @@ public class currentMediaPlayer {
 
     }
 
-
+    public static String getRepoName() {
+        return currentRepoName;
+    }
     public static String getMediaName() {
         return mediaName;
     }
-
     private static boolean prepared;
-    public static boolean changeMedia(String newSongName) {
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("musicRepo/"+newSongName);
+    public static boolean changeMedia(String repoName,String newSongName) {
+        String lastSong = getMediaName().
+                replace(".mp3", "");
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(repoName+"/"+newSongName);
+
         prepared=false;
         storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
@@ -76,8 +88,14 @@ public class currentMediaPlayer {
                         String url = uri.toString();
                         Log.e("URL",url);
 
+                        DatabaseReference mDatabase  = FirebaseDatabase.getInstance("https://audiostreamapp-6a52b-default-rtdb.europe-west1.firebasedatabase.app/").getReference().child("recommend/"+ lastSong);
                         currentMediaPlayer.setMediaPlayerURL(url,(String) newSongName);
-
+                        currentRepoName=repoName;
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put(getMediaName().
+                                        replace(".mp3", ""),
+                                ServerValue.increment(1));
+                        mDatabase.updateChildren(updates);
                         currentMediaPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
                             @Override
@@ -121,7 +139,7 @@ public class currentMediaPlayer {
                         // Download url of file
                         String url = uri.toString();
                         Log.e("URL",url);
-                        currentMediaPlayer.setDataSource(url,(String) newSongName);
+
                     }
                 })
 

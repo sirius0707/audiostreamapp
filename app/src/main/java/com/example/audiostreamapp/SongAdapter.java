@@ -1,5 +1,7 @@
 package com.example.audiostreamapp;
 
+import static com.example.audiostreamapp.MainActivity.play_name;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.provider.ContactsContract;
@@ -60,9 +62,11 @@ public class SongAdapter extends RecyclerView.Adapter<MyView> {
             public void onClick(View view) {
                 //currentMediaPlayer.listPosition=holder.getAdapterPosition();
 
-                currentMediaPlayer.changeMedia((String) holder.audio_name.getText());
+                currentMediaPlayer.changeMedia("musicRepo",(String) holder.audio_name.getText());
+                currentMediaPlayer.changeMedia("audioBooks",(String) holder.audio_name.getText());
                 currentMediaPlayer.fromList=true;
                 holder.audio_name.getText();
+                play_name.setText(holder.audio_name.getText());
             }
         });
 
