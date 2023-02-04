@@ -129,10 +129,10 @@ public class SyncRoomActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Hide play button and show pause button
-                mAnimator.resume();
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
                 //Start media player
+                mAnimator.resume();
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
                 handler.postDelayed(runnable,0);
@@ -381,6 +381,7 @@ public class SyncRoomActivity extends AppCompatActivity {
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(repoName+"/"+newSongName);
                     if (getMediaName().equals(newSongName))
                     {
+
                         mediaPlayer.start();
                         mediaPlayer.seekTo(snapshot.child("pos").getValue(Long.class).intValue());
                         handler.postDelayed(runnable,0);
@@ -388,6 +389,7 @@ public class SyncRoomActivity extends AppCompatActivity {
                         Boolean playStatus = snapshot.child("playStatus").getValue(Boolean.class);
 
                         if (!playStatus && mediaPlayer.isPlaying()){
+                            mAnimator.pause();
                             btPause.setVisibility(View.GONE);
                             btPlay.setVisibility(View.VISIBLE);
                             mediaPlayer.pause();
@@ -397,6 +399,8 @@ public class SyncRoomActivity extends AppCompatActivity {
                         if (playStatus){
                             btPlay.setVisibility(View.GONE);
                             btPause.setVisibility(View.VISIBLE);
+
+                            mAnimator.resume();
 
                         }
                         return;
