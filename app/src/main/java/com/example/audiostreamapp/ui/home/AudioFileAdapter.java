@@ -92,24 +92,19 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.View
             public void onClick(View view) {
                 currentMediaPlayer.fromList = false;
                 Map<String, Object> updates = new HashMap<>();
-
-                mDatabase.updateChildren(updates);
-                StorageReference storageRef = null;
                 String type="musicRepo";
                 if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.musicBtn) {
-                    updates.put("music/" + currentMediaPlayer.
-                            getMediaName().
-                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    updates.put("music/" + textView.getText()
+                            + "/playedTimes", ServerValue.increment(1));
                     type="musicRepo";
                 } else if (HomeFragment.contentMode.getCheckedRadioButtonId() == R.id.audiobookBtn) {
                     type="audioBooks";
-                    updates.put("audiobooks/" + currentMediaPlayer.
-                            getMediaName().
-                            replace(".mp3", "") + "/playedTimes", ServerValue.increment(1));
+                    updates.put("audiobooks/" + textView.getText()+ "/playedTimes", ServerValue.increment(1));
 
                 } else {
                     Log.e("Storage error", "Specified storage is not found");
                 }
+                mDatabase.updateChildren(updates);
                 currentMediaPlayer.changeMedia(type,textView.getText()+ ".mp3");
                 play_name.setText(holder.nameTextView.getText());
             }
