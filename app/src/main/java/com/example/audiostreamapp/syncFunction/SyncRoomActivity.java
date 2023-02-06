@@ -3,6 +3,7 @@ package com.example.audiostreamapp.syncFunction;
 import static com.example.audiostreamapp.data.model.currentMediaPlayer.getMediaName;
 import static com.example.audiostreamapp.data.model.currentMediaPlayer.getRepoName;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,6 +58,7 @@ public class SyncRoomActivity extends AppCompatActivity {
     ImageView btRew,btPlay,btPause,btFf;
     Handler handler = new Handler();
     Runnable runnable;
+    ObjectAnimator mAnimator;
     MediaPlayer mediaPlayer;
     Button btSendMs;
     EditText liveComment;
@@ -73,6 +77,8 @@ public class SyncRoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sync_room);
         currentActivity = this;
 
+
+
         role = getIntent().getStringExtra("Role");
 
         playerPosition = findViewById(R.id.player_position);
@@ -88,7 +94,7 @@ public class SyncRoomActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid=user.getUid();
         String userName = user.getDisplayName();
-
+        initAnimator();
 
         runnable = new Runnable() {
             @Override
@@ -103,6 +109,7 @@ public class SyncRoomActivity extends AppCompatActivity {
         mediaPlayer = currentMediaPlayer.getMediaPlayer();
         if (mediaPlayer.isPlaying())
         {
+            mAnimator.start();
             btPlay.setVisibility(View.GONE);
             btPause.setVisibility(View.VISIBLE);
             //Start media player
@@ -125,6 +132,7 @@ public class SyncRoomActivity extends AppCompatActivity {
                 btPlay.setVisibility(View.GONE);
                 btPause.setVisibility(View.VISIBLE);
                 //Start media player
+                mAnimator.resume();
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
                 handler.postDelayed(runnable,0);
@@ -138,6 +146,7 @@ public class SyncRoomActivity extends AppCompatActivity {
                                        public void onClick(View view) {
                                            btPause.setVisibility(View.GONE);
                                            btPlay.setVisibility(View.VISIBLE);
+                                           mAnimator.pause();
                                            mediaPlayer.pause();
                                            handler.removeCallbacks(runnable);
                                            setCurrentStatus();
@@ -309,6 +318,16 @@ public class SyncRoomActivity extends AppCompatActivity {
                 });
     }
 
+    private void initAnimator() {
+            mAnimator = ObjectAnimator.ofFloat(phonogramLogo,"rotation",0.0f,360.0f);
+            mAnimator.setDuration(3000);//设定转一圈的时间
+            mAnimator.setRepeatCount(Animation.INFINITE);//设定无限循环
+            mAnimator.setRepeatMode(ObjectAnimator.RESTART);//循环模式
+            mAnimator.setInterpolator(new LinearInterpolator());//匀速
+            mAnimator.start();
+            mAnimator.pause();
+    }
+
     private String convertFormat(int duration) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(duration),
@@ -362,6 +381,7 @@ public class SyncRoomActivity extends AppCompatActivity {
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(repoName+"/"+newSongName);
                     if (getMediaName().equals(newSongName))
                     {
+
                         mediaPlayer.start();
                         mediaPlayer.seekTo(snapshot.child("pos").getValue(Long.class).intValue());
                         handler.postDelayed(runnable,0);
@@ -369,6 +389,7 @@ public class SyncRoomActivity extends AppCompatActivity {
                         Boolean playStatus = snapshot.child("playStatus").getValue(Boolean.class);
 
                         if (!playStatus && mediaPlayer.isPlaying()){
+                            mAnimator.pause();
                             btPause.setVisibility(View.GONE);
                             btPlay.setVisibility(View.VISIBLE);
                             mediaPlayer.pause();
@@ -378,6 +399,8 @@ public class SyncRoomActivity extends AppCompatActivity {
                         if (playStatus){
                             btPlay.setVisibility(View.GONE);
                             btPause.setVisibility(View.VISIBLE);
+
+                            mAnimator.resume();
 
                         }
                         return;

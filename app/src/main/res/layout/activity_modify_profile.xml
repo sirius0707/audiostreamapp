@@ -41,8 +41,8 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/EditText_Name"
-            android:layout_width="294sp"
-            android:layout_height="48sp"
+            android:layout_width="294dp"
+            android:layout_height="48dp"
             android:hint="New Name" />
     </com.google.android.material.textfield.TextInputLayout>
 
