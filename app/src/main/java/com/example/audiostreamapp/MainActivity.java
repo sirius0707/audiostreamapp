@@ -238,9 +238,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int pos = getAudioPos(currentMediaPlayer.getMediaName(),favList);
-
-                if(currentMediaPlayer.isFromList()==false && favList.size()==0 || pos==favList.size()-1){mediaPlayer.seekTo(0);}
-                else if(currentMediaPlayer.isFromList() && pos!=favList.size() || currentMediaPlayer.isFromList()==false && favList.size()!=0 ) {
+                if(!currentMediaPlayer.isFromList() && favList.size()==0 || pos==favList.size()-1){mediaPlayer.seekTo(0);}
+                else if(currentMediaPlayer.isFromList() && pos!=favList.size() || !currentMediaPlayer.isFromList() && favList.size()!=0 ) {
                     pos=pos+1;
                     mediaPlayer.reset();
                     currentMediaPlayer.changeMedia("musicRepo",favList.get(pos).getName());
