@@ -39,12 +39,21 @@ There are two ways to install the app to the installation device:
 
 ## Implementation
 [Data entity ](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/tree/main/app/src/main/java/com/example/audiostreamapp/data/model)
+
 [Login](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/blob/main/app/src/main/java/com/example/audiostreamapp/LoginActivity.java)
+
 [Admin mode](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/blob/main/app/src/main/java/com/example/audiostreamapp/AdminModeActivity.java)
+
 [Message handler](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/blob/main/app/src/main/java/com/example/audiostreamapp/DirectMessageActivity.java)
+
 [Profile handler](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/blob/main/app/src/main/java/com/example/audiostreamapp/DisplayProfileActivity.java)
+
 [Favorite](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/blob/main/app/src/main/java/com/example/audiostreamapp/FavoriteActivity.java)
+
 [Chat room](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/blob/main/app/src/main/java/com/example/audiostreamapp/LiveRoomActivity.java)
+
 [Sync](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/blob/main/app/src/main/java/com/example/audiostreamapp/syncFunction/SyncRoomActivity.java)
+
 [Live comment](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/tree/main/app/src/main/java/com/example/audiostreamapp/liveComment)
+
 [Main fragment](https://git.rwth-aachen.de/iptk/ws22-23/groupb/audiostreamapp/-/tree/main/app/src/main/java/com/example/audiostreamapp/ui)
