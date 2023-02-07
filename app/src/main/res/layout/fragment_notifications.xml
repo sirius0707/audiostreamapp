@@ -10,24 +10,24 @@
         android:id="@+id/Image_Avatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/Button_To_Admin_Mode"
+        app:layout_constraintTop_toTopOf="parent"
  />
 
     <Button
         android:id="@+id/Button_To_Admin_Mode"
         android:layout_width="150sp"
-        android:layout_height="45sp"
-        android:layout_marginBottom="5dp"
+        android:layout_height="50sp"
+        android:layout_marginTop="30dp"
 
         android:background="@drawable/btn_nor_down"
         android:text="ADMIN MODE"
         android:textSize="10sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/Button_To_Modify_Profile"
+        app:layout_constraintTop_toBottomOf="@id/Image_Avatar"
 
 
         />
@@ -35,24 +35,22 @@
     <Button
         android:id="@+id/Button_To_Modify_Profile"
         android:layout_width="150sp"
-        android:layout_height="45sp"
-
+        android:layout_height="50sp"
+        android:layout_marginTop="10dp"
 
         android:background="@drawable/btn_nor_down"
         android:text="MODIFY PROFILE"
         android:textSize="10sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/Button_To_Admin_Mode" />
 
     <Button
         android:id="@+id/Button_Upload_File"
         android:layout_width="150sp"
-        android:layout_height="45sp"
+        android:layout_height="50sp"
 
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/btn_nor_down"
         android:text="Upload"
         android:textSize="10sp"
@@ -64,9 +62,9 @@
     <Button
         android:id="@+id/Button_To_Reset_PWD"
         android:layout_width="150sp"
-        android:layout_height="45sp"
+        android:layout_height="50sp"
 
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
 
         android:background="@drawable/btn_nor_down"
         android:text="Reset Password"
@@ -80,9 +78,9 @@
     <Button
         android:id="@+id/Button_Sign_Out"
         android:layout_width="150sp"
-        android:layout_height="45sp"
+        android:layout_height="50sp"
 
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
 
 
         android:background="@drawable/btn_nor_down"

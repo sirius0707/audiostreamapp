@@ -265,7 +265,7 @@ public class LiveRoomActivity extends AppCompatActivity {
             }
         });
 
-        // Click the Send comment button
+        // 点击发送评论按钮
         btSendMs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -321,7 +321,7 @@ public class LiveRoomActivity extends AppCompatActivity {
         });
 
         //init audiofile list from Firebase Storage
-        // music/audio.mp3/livechat. The latest (last) 6 comments
+        // 数据库music/歌曲.mp3/livechat中最新（最后）6个评论
         mDatabase.child("music/"+ currentMediaPlayer.getMediaName().replace(".mp3","")+"/livechat")
                 .limitToLast(6).addChildEventListener(new ChildEventListener() {
                     @Override
@@ -361,10 +361,10 @@ public class LiveRoomActivity extends AppCompatActivity {
 
     private void initAnimator() {
         mAnimator = ObjectAnimator.ofFloat(iv,"rotation",0.0f,360.0f);
-        mAnimator.setDuration(3000);// Set the time for one turn
-        mAnimator.setRepeatCount(Animation.INFINITE);// Set an infinite loop
-        mAnimator.setRepeatMode(ObjectAnimator.RESTART);// Loop mode
-        mAnimator.setInterpolator(new LinearInterpolator());// Uniform velocity
+        mAnimator.setDuration(3000);//设定转一圈的时间
+        mAnimator.setRepeatCount(Animation.INFINITE);//设定无限循环
+        mAnimator.setRepeatMode(ObjectAnimator.RESTART);//循环模式
+        mAnimator.setInterpolator(new LinearInterpolator());//匀速
         mAnimator.start();
         mAnimator.pause();
     }
@@ -404,14 +404,14 @@ public class LiveRoomActivity extends AppCompatActivity {
         }
     }
 
-    // Change format
+    // 转换格式
     private String convertFormat(int duration) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(duration),
                 TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
     }
 
-    // Number of people who open the music screen +1
+    // 打开音乐界面人数+1
     @Override
     protected void onStart() {
         super.onStart();
@@ -422,7 +422,7 @@ public class LiveRoomActivity extends AppCompatActivity {
         mDatabase.updateChildren(updates);
     }
 
-    // Number of people who open the music screen -1
+    // 打开音乐界面人数-1
     @Override
     protected void onStop() {
         super.onStop();
